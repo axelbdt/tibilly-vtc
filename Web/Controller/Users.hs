@@ -39,6 +39,9 @@ instance Controller UsersController where
                     redirectTo NewSessionAction
 
     action CreateUserAction = do
+        setErrorMessage "Sign up is disabled, sorry!"
+        redirectTo NewSessionAction
+    {-
         let user = newRecord @User
         user
             |> buildUser
@@ -51,6 +54,7 @@ instance Controller UsersController where
                         |> createRecord
                     setSuccessMessage "You have successfully registered"
                     redirectTo NewSessionAction
+    -}
 
     action DeleteUserAction { userId } = do
         user <- fetch userId

@@ -1,3 +1,0 @@
-ALTER TABLE bills DROP COLUMN date;
-ALTER TABLE bills ADD COLUMN sent_at DATE DEFAULT null;
-ALTER TABLE bills ADD COLUMN created_at DATE DEFAULT null;

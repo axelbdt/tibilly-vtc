@@ -1,1 +1,0 @@
-ALTER TABLE trips ALTER COLUMN date SET DEFAULT now();
