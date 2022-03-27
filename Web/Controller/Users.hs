@@ -35,7 +35,7 @@ instance Controller UsersController where
                     user <- user
                         |> set #passwordHash hashed
                         |> createRecord
-                    setSuccessMessage "You have successfully registered"
+                    setSuccessMessage ""
                     redirectTo NewSessionAction
 
     action CreateUserAction = do
@@ -45,9 +45,12 @@ instance Controller UsersController where
             |> ifValid \case
                 Left user -> render NewView { .. } 
                 Right user -> do
-                    user <- user |> createRecord
-                    setSuccessMessage "User created"
-                    redirectTo UsersAction
+                    hashed <- hashPassword  (get #passwordHash user)
+                    user <- user
+                        |> set #passwordHash hashed
+                        |> createRecord
+                    setSuccessMessage "You have successfully registered"
+                    redirectTo NewSessionAction
 
     action DeleteUserAction { userId } = do
         user <- fetch userId

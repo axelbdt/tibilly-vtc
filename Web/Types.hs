@@ -29,3 +29,23 @@ data UsersController
     | UpdateUserAction { userId :: !(Id User) }
     | DeleteUserAction { userId :: !(Id User) }
     deriving (Eq, Show, Data)
+
+data BillsController
+    = BillsAction
+    | NewBillAction
+    | ShowBillAction { billId :: !(Id Bill) }
+    | CreateBillAction
+    | EditBillAction { billId :: !(Id Bill) }
+    | UpdateBillAction { billId :: !(Id Bill) }
+    | DeleteBillAction { billId :: !(Id Bill) }
+    deriving (Eq, Show, Data)
+
+data ClientsController
+    = ClientsAction
+    | NewClientAction
+    | ShowClientAction { clientId :: !(Id Client) }
+    | CreateClientAction
+    | EditClientAction { clientId :: !(Id Client) }
+    | UpdateClientAction { clientId :: !(Id Client) }
+    | DeleteClientAction { clientId :: !(Id Client) }
+    deriving (Eq, Show, Data)

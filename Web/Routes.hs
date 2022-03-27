@@ -9,3 +9,9 @@ instance AutoRoute StaticController
 
 instance AutoRoute UsersController
 
+
+instance AutoRoute BillsController
+
+
+instance AutoRoute ClientsController
+

@@ -1,0 +1,1 @@
+ALTER TABLE bills ALTER COLUMN date SET DEFAULT now();

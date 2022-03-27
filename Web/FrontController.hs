@@ -7,14 +7,18 @@ import Web.Controller.Sessions
 import Web.View.Layout (defaultLayout)
 
 -- Controller Imports
+import Web.Controller.Clients
+import Web.Controller.Bills
 import Web.Controller.Users
 import Web.Controller.Static
 
 instance FrontController WebApplication where
     controllers = 
-        [ startPage WelcomeAction
+        [ startPage BillsAction
         , parseRoute @SessionsController
         -- Generator Marker
+        , parseRoute @ClientsController
+        , parseRoute @BillsController
         , parseRoute @UsersController
         ]
 
