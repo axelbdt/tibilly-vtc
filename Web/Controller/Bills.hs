@@ -15,6 +15,7 @@ instance Controller BillsController where
             |> filterWhere (#userId, currentUserId)
             |> orderByDesc #createdAt
             |> fetch
+            >>= collectionFetchRelated #clientId
         render IndexView { .. }
 
     action NewBillAction = do

@@ -39,8 +39,10 @@ instance Controller UsersController where
                     redirectTo NewSessionAction
 
     action CreateUserAction = do
+    -- {-
         setErrorMessage "Sign up is disabled, sorry!"
         redirectTo NewSessionAction
+    -- -}
     {-
         let user = newRecord @User
         user
