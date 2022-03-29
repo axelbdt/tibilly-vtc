@@ -1,5 +1,6 @@
 module Web.View.Trips.Index where
 import Web.View.Prelude
+import Web.View.Trips.Render
 
 data IndexView = IndexView { trips :: [Trip]  }
 
@@ -19,13 +20,3 @@ instance View IndexView where
             breadcrumb = renderBreadcrumb
                 [ breadcrumbLink "Trips" TripsAction
                 ]
-
-renderTrip :: Trip -> Html
-renderTrip trip = [hsx|
-    <tr>
-        <td>{trip}</td>
-        <td><a href={ShowTripAction (get #id trip)}>Show</a></td>
-        <td><a href={EditTripAction (get #id trip)} class="text-muted">Edit</a></td>
-        <td><a href={DeleteTripAction (get #id trip)} class="js-delete text-muted">Delete</a></td>
-    </tr>
-|]

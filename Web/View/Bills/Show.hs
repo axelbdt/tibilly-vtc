@@ -1,5 +1,6 @@
 module Web.View.Bills.Show where
 import Web.View.Prelude
+import Web.View.Trips.Render
 
 data ShowView = ShowView { bill :: Include' ["clientId", "trips"] Bill }
  
@@ -29,11 +30,3 @@ instance View ShowView where
                             , breadcrumbText "Show Bill"
                             ]
 
-renderTrip :: Trip -> Html
-renderTrip trip = [hsx|
-    <tr>
-        <td>{get #startCity trip} - {get #destinationCity trip}</td>
-        <td><a href={EditTripAction (get #id trip)} class="text-muted">Edit</a></td>
-        <td><a href={DeleteTripAction (get #id trip)} class="js-delete text-muted">Delete</a></td>
-    </tr>
-|]
