@@ -10,15 +10,14 @@ CREATE TABLE users (
 );
 CREATE TABLE bills (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
-    sent_at TIMESTAMP WITH TIME ZONE,
     user_id UUID NOT NULL,
     client_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 CREATE TABLE trips (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
-    startCity TEXT NOT NULL,
-    destinationCity TEXT NOT NULL,
+    start_city TEXT NOT NULL,
+    destination_city TEXT NOT NULL,
     date DATE DEFAULT NOW() NOT NULL,
     bill_id UUID NOT NULL
 );
@@ -36,4 +35,4 @@ CREATE INDEX bills_client_id_index ON bills (client_id);
 ALTER TABLE bills ADD CONSTRAINT bills_ref_client_id FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE NO ACTION;
 ALTER TABLE bills ADD CONSTRAINT bills_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION;
 ALTER TABLE clients ADD CONSTRAINT clients_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION;
-ALTER TABLE trips ADD CONSTRAINT trips_ref_bill_id FOREIGN KEY (bill_id) REFERENCES bills (id) ON DELETE NO ACTION;
+ALTER TABLE trips ADD CONSTRAINT trips_ref_bill_id FOREIGN KEY (bill_id) REFERENCES bills (id) ON DELETE CASCADE;

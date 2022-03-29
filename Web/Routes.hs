@@ -15,3 +15,6 @@ instance AutoRoute BillsController
 
 instance AutoRoute ClientsController
 
+
+instance AutoRoute TripsController
+

@@ -29,6 +29,8 @@ instance Controller BillsController where
     action ShowBillAction { billId } = do
         ensureIsUser
         bill <- fetch billId
+            >>= fetchRelated #clientId
+            >>= fetchRelated #trips
         accessDeniedUnless (get #userId bill == currentUserId)
         render ShowView { .. }
 
@@ -67,7 +69,7 @@ instance Controller BillsController where
                         |> set #userId currentUserId
                         |> createRecord
                     setSuccessMessage "Bill created"
-                    redirectTo BillsAction
+                    redirectTo (ShowBillAction (get #id bill))
 
     action DeleteBillAction { billId } = do
         ensureIsUser

@@ -49,3 +49,13 @@ data ClientsController
     | UpdateClientAction { clientId :: !(Id Client) }
     | DeleteClientAction { clientId :: !(Id Client) }
     deriving (Eq, Show, Data)
+
+data TripsController
+    = TripsAction
+    | NewTripAction { billId :: !(Id Bill) }
+    | ShowTripAction { tripId :: !(Id Trip) }
+    | CreateTripAction
+    | EditTripAction { tripId :: !(Id Trip) }
+    | UpdateTripAction { tripId :: !(Id Trip) }
+    | DeleteTripAction { tripId :: !(Id Trip) }
+    deriving (Eq, Show, Data)
