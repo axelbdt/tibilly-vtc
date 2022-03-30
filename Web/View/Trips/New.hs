@@ -19,7 +19,7 @@ renderForm :: Trip -> Html
 renderForm trip = formFor trip [hsx|
     {(textField #startCity)}
     {(textField #destinationCity)}
-    {(hiddenField #date)}
+    {(dateField #date)}
     {(hiddenField #billId)}
     {submitButton}
 
