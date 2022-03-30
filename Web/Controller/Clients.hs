@@ -45,7 +45,6 @@ instance Controller ClientsController where
                 Left client -> render NewView { .. } 
                 Right client -> do
                     client <- client
-                        |> set #userId currentUserId
                         |> createRecord
                     setSuccessMessage "Client created"
                     redirectTo ClientsAction
@@ -58,6 +57,7 @@ instance Controller ClientsController where
 
 buildClient client = client
     |> fill @["email","firstName","lastName","userId"]
+    |> set #userId currentUserId
     |> validateField #email isEmail
     |> validateField #firstName nonEmpty
     |> validateField #lastName nonEmpty

@@ -46,10 +46,11 @@ instance Controller BillsController where
         accessDeniedUnless (get #userId bill == currentUserId)
         bill
             |> buildBill
-            |> ifValid \case
+            >>= ifValid \case
                 Left bill -> render EditView { .. }
                 Right bill -> do
-                    bill <- bill |> updateRecord
+                    bill <- bill
+                        |> updateRecord
                     setSuccessMessage "Bill updated"
                     redirectTo EditBillAction { .. }
 
@@ -58,7 +59,7 @@ instance Controller BillsController where
         let bill = newRecord @Bill
         bill
             |> buildBill
-            |> ifValid \case
+            >>= ifValid \case
                 Left bill -> do
                     userClients <- query @Client
                         |> filterWhere (#userId, currentUserId)
@@ -66,7 +67,6 @@ instance Controller BillsController where
                     render NewView { .. } 
                 Right bill -> do
                     bill <- bill 
-                        |> set #userId currentUserId
                         |> createRecord
                     setSuccessMessage "Bill created"
                     redirectTo (ShowBillAction (get #id bill))
@@ -81,3 +81,13 @@ instance Controller BillsController where
 
 buildBill bill = bill
     |> fill @["userId","clientId"]
+    |> set #userId currentUserId
+    |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
+
+validateClientBelongsToUser userId clientId = do
+    client <- fetch clientId
+    return
+        if userId == get #userId client then
+            Success
+        else
+            Failure "Not yours"

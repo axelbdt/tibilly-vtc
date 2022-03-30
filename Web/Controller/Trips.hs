@@ -32,7 +32,7 @@ instance Controller TripsController where
         trip <- fetch tripId
         trip
             |> buildTrip
-            |> ifValid \case
+            >>= ifValid \case
                 Left trip -> render EditView { .. }
                 Right trip -> do
                     trip <- trip |> updateRecord
@@ -43,7 +43,7 @@ instance Controller TripsController where
         let trip = newRecord @Trip
         trip
             |> buildTrip
-            |> ifValid \case
+            >>= ifValid \case
                 Left trip -> render NewView { .. } 
                 Right trip -> do
                     trip <- trip |> createRecord
@@ -60,3 +60,12 @@ buildTrip trip = trip
     |> fill @["startCity","destinationCity","date","billId"]
     |> validateField #startCity nonEmpty
     |> validateField #destinationCity nonEmpty
+    |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
+
+validateBillBelongsToUser userId billId = do
+    bill <- fetch billId
+    return
+        if currentUserId == get #userId bill then
+            Success
+        else
+            Failure "The bill you are trying to add a trip to does not belong to you."
