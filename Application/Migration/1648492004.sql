@@ -1,1 +1,0 @@
-ALTER TABLE bills DROP COLUMN sent_at;

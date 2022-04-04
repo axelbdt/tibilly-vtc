@@ -1,5 +1,7 @@
 module Web.Controller.Trips where
 
+import qualified Data.Text as T
+import Text.Read (reads)
 import Data.Time.Calendar
 
 import Web.Controller.Prelude
@@ -58,9 +60,39 @@ instance Controller TripsController where
 
 buildTrip trip = trip
     |> fill @["startCity","destinationCity","date","billId"]
+    |> parseAndSetPrice (param @Text "price")
+    |> validateField #price (isGreaterOrEqualThan 0)
     |> validateField #startCity nonEmpty
     |> validateField #destinationCity nonEmpty
     |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
+
+parseAndSetPrice text record =
+    case parsePrice text of
+        Left error  -> record |> attachFailure #price error
+        Right price -> record |> set #price price
+
+    
+readFloatWithComma :: Text -> Either Text Float
+readFloatWithComma text = case text |> T.replace "," "." |> T.unpack |> reads of
+    [(x, "")] -> Right x
+    _         -> Left "Not a decimal number with a comma"
+
+parsePrice :: Text -> Either Text Int
+parsePrice text =
+    case readFloatWithComma text of
+        Left error -> Left error
+        Right x    ->
+            let price = 100 * x
+                roundPrice = round price :: Int
+            in
+            if price == fromIntegral roundPrice then
+                Right roundPrice
+            else 
+                Left "Too many digits after comma"
+
+isGreaterOrEqualThan min value | value >= min = Success
+isGreaterOrEqualThan min value = Failure "Cannot be negative"
+
 
 validateBillBelongsToUser userId billId = do
     bill <- fetch billId

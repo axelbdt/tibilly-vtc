@@ -19,7 +19,8 @@ CREATE TABLE trips (
     start_city TEXT NOT NULL,
     destination_city TEXT NOT NULL,
     date DATE DEFAULT NOW() NOT NULL,
-    bill_id UUID NOT NULL
+    bill_id UUID NOT NULL,
+    price INT NOT NULL
 );
 CREATE INDEX trips_bill_id_index ON trips (bill_id);
 CREATE INDEX bills_user_id_index ON bills (user_id);
