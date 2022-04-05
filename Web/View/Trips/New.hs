@@ -20,7 +20,7 @@ renderForm trip = formFor trip [hsx|
     {(textField #startCity)}
     {(textField #destinationCity)}
     {(dateField #date)}
-    {(textField #price)}
+    {(numberField #price) {fieldLabel = "Price (€)", additionalAttributes = [("min","0")]}}
     {(hiddenField #billId)}
     {submitButton}
 

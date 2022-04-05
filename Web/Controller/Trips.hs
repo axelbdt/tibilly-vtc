@@ -60,35 +60,26 @@ instance Controller TripsController where
 
 buildTrip trip = trip
     |> fill @["startCity","destinationCity","date","billId"]
-    |> parseAndSetPrice (param @Text "price")
     |> validateField #price (isGreaterOrEqualThan 0)
     |> validateField #startCity nonEmpty
     |> validateField #destinationCity nonEmpty
     |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
 
+{-
 parseAndSetPrice text record =
-    case parsePrice text of
+    case readFloatWithComma text of
         Left error  -> record |> attachFailure #price error
-        Right price -> record |> set #price price
+        Right amount -> record |> set #price (eurosToCents amount)
 
     
 readFloatWithComma :: Text -> Either Text Float
 readFloatWithComma text = case text |> T.replace "," "." |> T.unpack |> reads of
     [(x, "")] -> Right x
-    _         -> Left "Not a decimal number with a comma"
+    _         -> Left "Invalid input"
 
-parsePrice :: Text -> Either Text Int
-parsePrice text =
-    case readFloatWithComma text of
-        Left error -> Left error
-        Right x    ->
-            let price = 100 * x
-                roundPrice = round price :: Int
-            in
-            if price == fromIntegral roundPrice then
-                Right roundPrice
-            else 
-                Left "Too many digits after comma"
+eurosToCents :: Float -> Int
+eurosToCents amount = round (100 * amount)
+-}
 
 isGreaterOrEqualThan min value | value >= min = Success
 isGreaterOrEqualThan min value = Failure "Cannot be negative"
