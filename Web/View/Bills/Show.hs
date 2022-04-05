@@ -2,7 +2,7 @@ module Web.View.Bills.Show where
 import Web.View.Prelude
 import Web.View.Trips.Render
 
-data ShowView = ShowView { bill :: Include' ["clientId", "trips"] Bill }
+data ShowView = ShowView { bill :: Include' ["clientId", "trips"] Bill, priceIncludingTax :: Int, priceExcludingTax :: Float }
  
 instance View ShowView where
     html ShowView { .. } = [hsx|
@@ -20,6 +20,13 @@ instance View ShowView where
                     </tr>
                 </thead>
                 <tbody>{forEach (get #trips bill) renderTrip}</tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <th>{priceIncludingTax}€ incl. VAT</th>
+                        <th>{priceExcludingTax}€ excl. VAT</th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
 

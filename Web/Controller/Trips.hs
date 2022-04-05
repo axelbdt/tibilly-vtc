@@ -59,7 +59,7 @@ instance Controller TripsController where
         redirectTo TripsAction
 
 buildTrip trip = trip
-    |> fill @["startCity","destinationCity","date","billId"]
+    |> fill @["startCity","destinationCity","date","billId", "price"]
     |> validateField #price (isGreaterOrEqualThan 0)
     |> validateField #startCity nonEmpty
     |> validateField #destinationCity nonEmpty

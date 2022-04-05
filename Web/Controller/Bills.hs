@@ -31,6 +31,8 @@ instance Controller BillsController where
         bill <- fetch billId
             >>= fetchRelated #clientId
             >>= fetchRelated #trips
+        let priceIncludingTax = computePriceIncludingTax bill
+        let priceExcludingTax = excludeTax priceIncludingTax
         accessDeniedUnless (get #userId bill == currentUserId)
         render ShowView { .. }
 
@@ -91,3 +93,8 @@ validateClientBelongsToUser userId clientId = do
             Success
         else
             Failure "Not yours"
+
+computePriceIncludingTax bill = bill |> get #trips |> map (get #price) |> sum
+
+excludeTax :: Int -> Float
+excludeTax price = fromIntegral price * (1.0 - 0.1)
