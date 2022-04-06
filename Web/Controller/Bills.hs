@@ -18,7 +18,7 @@ instance Controller BillsController where
             >>= collectionFetchRelated #clientId
         render IndexView { .. }
 
-    action NewBillAction = do
+    action NewBillSelectClientAction = do
         ensureIsUser
         userClients <- query @Client
              |> filterWhere (#userId, currentUserId)

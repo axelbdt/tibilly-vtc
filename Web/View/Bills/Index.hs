@@ -7,7 +7,7 @@ instance View IndexView where
     html IndexView { .. } = [hsx|
         {breadcrumb}
 
-        <h1>Bills<a href={pathTo NewBillAction} class="btn btn-primary ml-4">+ New</a></h1>
+        <h1>Bills<a href={pathTo NewBillSelectClientAction} class="btn btn-primary ml-4">+ New</a></h1>
         <div class="table-responsive">
             <table class="table">
                 <tbody>{forEach bills renderBill}</tbody>
