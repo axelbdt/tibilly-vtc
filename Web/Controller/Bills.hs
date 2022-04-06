@@ -4,7 +4,7 @@ import Data.Time.Clock
 import Data.Time.Calendar
 import Web.Controller.Prelude
 import Web.View.Bills.Index
-import Web.View.Bills.New
+import Web.View.Bills.SelectClient
 import Web.View.Bills.Edit
 import Web.View.Bills.Show
 
@@ -24,7 +24,7 @@ instance Controller BillsController where
              |> filterWhere (#userId, currentUserId)
              |> fetch
         let bill = newRecord
-        render NewView { .. }
+        render SelectClientView { .. }
 
     action ShowBillAction { billId } = do
         ensureIsUser
@@ -66,7 +66,7 @@ instance Controller BillsController where
                     userClients <- query @Client
                         |> filterWhere (#userId, currentUserId)
                         |> fetch
-                    render NewView { .. } 
+                    render SelectClientView { .. } 
                 Right bill -> do
                     bill <- bill 
                         |> createRecord
@@ -87,12 +87,15 @@ buildBill bill = bill
     |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
 
 validateClientBelongsToUser userId clientId = do
-    client <- fetch clientId
-    return
-        if userId == get #userId client then
-            Success
-        else
-            Failure "Not yours"
+    if clientId == "00000000-0000-0000-0000-000000000000" then
+        return (Failure "Please select a client")
+    else do
+      client <- fetch clientId
+      return
+          if userId == get #userId client then
+              Success
+          else
+              Failure "Not yours"
 
 computePriceIncludingTax bill = bill |> get #trips |> map (get #price) |> sum
 
