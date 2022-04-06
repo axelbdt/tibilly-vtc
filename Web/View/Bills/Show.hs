@@ -23,8 +23,8 @@ instance View ShowView where
                 <tfoot>
                     <tr>
                         <th>Total</th>
-                        <th>{priceIncludingTax}€ incl. VAT</th>
-                        <th>{priceExcludingTax}€ excl. VAT</th>
+                        <th>{renderPrice priceIncludingTax}€ incl. VAT</th>
+                        <th>{renderDecimalPrice priceExcludingTax}€ excl. VAT</th>
                     </tr>
                 </tfoot>
             </table>
