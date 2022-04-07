@@ -16,7 +16,7 @@ tripForm trip = [hsx|
     {(textField #destinationCity)}
     {(dateField #date)}
     {(numberField #price) {fieldLabel = "Price (€)", additionalAttributes = [("min","0")]}}
-    {(textField #billId)}
+    {(hiddenField #billId)}
     {submitButton}
 
 |]

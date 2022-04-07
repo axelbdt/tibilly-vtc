@@ -61,8 +61,7 @@ instance Controller BillsController where
         ensureIsUser
         let bill = newRecord @Bill
         bill
-            |> fill @["userId","clientId"]
-            |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
+            |> buildBill
             >>= ifValid \case
                 Left bill -> do
                     userClients <- query @Client
