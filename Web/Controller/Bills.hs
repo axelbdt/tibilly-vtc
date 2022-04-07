@@ -57,22 +57,6 @@ instance Controller BillsController where
                     setSuccessMessage "Bill updated"
                     redirectTo EditBillAction { .. }
 
-    action CreateBillAction = do
-        ensureIsUser
-        let bill = newRecord @Bill
-        bill
-            |> fill @["userId","clientId"]
-            |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
-            >>= ifValid \case
-                Left bill -> do
-                    userClients <- query @Client
-                        |> filterWhere (#userId, currentUserId)
-                        |> fetch
-                    render SelectClientView { .. } 
-                Right bill -> do
-                    redirectTo (NewTripFromClientAction (get #clientId bill))
-        redirectTo (NewTripFromClientAction (get #clientId bill))
-
     action DeleteBillAction { billId } = do
         ensureIsUser
         bill <- fetch billId
