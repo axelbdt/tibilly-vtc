@@ -11,6 +11,9 @@ import Web.View.Bills.CheckBeforeSend
 
 
 instance Controller BillsController where
+    action GenerateBillPDFAction { billId }= do
+        redirectTo (CheckBeforeSendBillAction billId)
+
     action BillsAction = do
         ensureIsUser
         bills <- query @Bill
