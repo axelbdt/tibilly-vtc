@@ -73,24 +73,6 @@ instance Controller BillsController where
                     redirectTo (NewTripFromClientAction (get #clientId bill))
         redirectTo (NewTripFromClientAction (get #clientId bill))
 
-
-    action RealCreateBillAction = do
-        ensureIsUser
-        let bill = newRecord @Bill
-        bill
-            |> buildBill
-            >>= ifValid \case
-                Left bill -> do
-                    userClients <- query @Client
-                        |> filterWhere (#userId, currentUserId)
-                        |> fetch
-                    render SelectClientView { .. } 
-                Right bill -> do
-                    bill <- bill 
-                        |> createRecord
-                    setSuccessMessage "Bill created"
-                    redirectTo (ShowBillAction (get #id bill))
-
     action DeleteBillAction { billId } = do
         ensureIsUser
         bill <- fetch billId

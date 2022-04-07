@@ -34,7 +34,6 @@ data BillsController
     = BillsAction
     | NewBillSelectClientAction
     | ShowBillAction { billId :: !(Id Bill) }
-    | RealCreateBillAction
     | CreateBillAction
     | EditBillAction { billId :: !(Id Bill) }
     | UpdateBillAction { billId :: !(Id Bill) }

@@ -45,8 +45,8 @@ instance Controller TripsController where
         let trip = newRecord @Trip
         trip
             |> buildTrip
-            -- >>= ifValid \case
-            |> ifValid \case
+            |> validateUser
+            >>= ifValid \case
                 Left trip -> render NewView { .. } 
                 Right trip -> do
                     trip <- trip |> createRecord
@@ -87,7 +87,7 @@ buildTrip trip = trip
     |> validateField #startCity nonEmpty
     |> validateField #destinationCity nonEmpty
 
-buildTripAndValidateUser trip = trip
+validateUser trip = trip
     |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
 
 {-
