@@ -2,6 +2,7 @@ module Web.View.Trips.NewFromClient where
 import Web.View.Prelude
 
 import Web.View.Trips.Render
+import Web.Types (BillsController(NewBillSelectClientPromptAction))
 
 data NewFromClientView = NewFromClientView {trip :: Trip, clientId :: Id Client}
 
@@ -14,6 +15,8 @@ instance View NewFromClientView where
         where
             breadcrumb = renderBreadcrumb
                 [ breadcrumbLink "Bills" BillsAction
+                , breadcrumbText "New Bill" 
+                , breadcrumbLink "Select Client" NewBillSelectClientPromptAction
                 , breadcrumbText "New Trip"
                 ]
 

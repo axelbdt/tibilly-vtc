@@ -14,7 +14,7 @@ instance View ShowView where
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Trips<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-primary ml-4">+ New</a></th>
+                        <th>Trips<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-secondary ml-4">+ Add</a></th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -22,12 +22,22 @@ instance View ShowView where
                 <tbody>{forEach (get #trips bill) renderTrip}</tbody>
                 <tfoot>
                     <tr>
-                        <th>Total</th>
-                        <th>{renderPrice priceIncludingTax}€ incl. VAT</th>
-                        <th>{renderDecimalPrice priceExcludingTax}€ excl. VAT</th>
+                        <th class="text-right">Total excl. VAT</th>
+                        <th>{renderDecimalPrice priceExcludingTax}€</th>
+                    </tr>
+                    <tr>
+                      <th class="text-right">VAT rate</th>
+                      <th>10%</th>
+                    </tr>
+                    <tr>
+                        <th class="text-right">Total incl. VAT</th>
+                        <th>{renderPrice priceIncludingTax}€</th>
                     </tr>
                 </tfoot>
             </table>
+        </div>
+        <div>
+            <a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Next</a>
         </div>
 
     |]

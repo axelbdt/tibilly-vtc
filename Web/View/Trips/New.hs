@@ -14,7 +14,7 @@ instance View NewView where
         where
             breadcrumb = renderBreadcrumb
                 [ breadcrumbLink "Bills" BillsAction
-                , breadcrumbLink "A bill" (ShowBillAction (get #billId trip))
+                , breadcrumbLink "Show Bill" (ShowBillAction (get #billId trip))
                 , breadcrumbText "New Trip"
                 ]
 

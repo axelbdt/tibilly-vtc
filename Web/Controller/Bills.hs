@@ -7,6 +7,7 @@ import Web.View.Bills.Index
 import Web.View.Bills.SelectClient
 import Web.View.Bills.Edit
 import Web.View.Bills.Show
+import Web.View.Bills.CheckBeforeSend
 
 
 instance Controller BillsController where
@@ -42,6 +43,11 @@ instance Controller BillsController where
         bill <- fetch billId
         accessDeniedUnless (get #userId bill == currentUserId)
         render EditView { .. }
+
+    action CheckBeforeSendBillAction { billId } = do
+        ensureIsUser
+        bill <- fetch billId
+        render CheckBeforeSendView { .. }
 
     action UpdateBillAction { billId } = do
         ensureIsUser
