@@ -8,7 +8,7 @@ instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
         <h1>Bill</h1>
-        <p>{get #clientId bill |> getClientFullName}</p>
+        <p>{get #clientId bill |> renderClientFullName}</p>
 
         <div class="table-responsive">
             <table class="table">

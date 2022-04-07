@@ -1,5 +1,8 @@
 module Web.View.Trips.NewFromClient where
 import Web.View.Prelude
+
+import Web.View.Trips.Render
+
 data NewFromClientView = NewFromClientView {trip :: Trip, clientId :: Id Client}
 
 instance View NewFromClientView where
@@ -15,12 +18,4 @@ instance View NewFromClientView where
                 ]
 
 renderForm :: Trip -> Id Client -> Html
-renderForm trip clientId = formFor' trip (pathTo (CreateTripAndBillAction clientId)) [hsx|
-    {(textField #startCity)}
-    {(textField #destinationCity)}
-    {(dateField #date)}
-    {(numberField #price) {fieldLabel = "Price (€)", additionalAttributes = [("min","0")]}}
-    {(textField #billId)}
-    {submitButton}
-
-|]
+renderForm trip clientId = formFor' trip (pathTo (CreateTripAndBillAction clientId)) (tripForm trip)

@@ -45,7 +45,7 @@ instance Controller TripsController where
         let trip = newRecord @Trip
         trip
             |> buildTrip
-            |> validateUser
+            |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
             >>= ifValid \case
                 Left trip -> render NewView { .. } 
                 Right trip -> do
@@ -53,7 +53,7 @@ instance Controller TripsController where
                     setSuccessMessage "Trip created"
                     redirectTo (ShowBillAction (get #billId trip))
 
-    action CreateTripAndBillAction { clientId }= do
+    action CreateTripAndBillAction { clientId } = do
         ensureIsUser
         let bill = newRecord @Bill
         let trip = newRecord @Trip |> buildTrip
@@ -87,8 +87,6 @@ buildTrip trip = trip
     |> validateField #startCity nonEmpty
     |> validateField #destinationCity nonEmpty
 
-validateUser trip = trip
-    |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
 
 {-
 parseAndSetPrice text record =

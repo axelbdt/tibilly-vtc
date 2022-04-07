@@ -6,7 +6,7 @@ data ShowView = ShowView { client :: Client }
 instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
-        <h1>{getClientFullName client}</h1>
+        <h1>{renderClientFullName client}</h1>
         <p>{get #email client}</p>
 
     |]

@@ -1,27 +1,22 @@
 module Web.View.Trips.New where
 import Web.View.Prelude
 
+import Web.View.Trips.Render (tripForm)
+
 data NewView = NewView { trip :: Trip }
 
 instance View NewView where
     html NewView { .. } = [hsx|
         {breadcrumb}
-        <h1>New Trip</h1>
+        <h1>Add Trip</h1>
         {renderForm trip}
     |]
         where
             breadcrumb = renderBreadcrumb
                 [ breadcrumbLink "Bills" BillsAction
+                , breadcrumbLink "A bill" (ShowBillAction (get #billId trip))
                 , breadcrumbText "New Trip"
                 ]
 
 renderForm :: Trip -> Html
-renderForm trip = formFor trip [hsx|
-    {(textField #startCity)}
-    {(textField #destinationCity)}
-    {(dateField #date)}
-    {(numberField #price) {fieldLabel = "Price (€)", additionalAttributes = [("min","0")]}}
-    {(textField #billId)}
-    {submitButton}
-
-|]
+renderForm trip = formFor trip (tripForm trip)

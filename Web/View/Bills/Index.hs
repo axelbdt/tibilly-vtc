@@ -22,7 +22,7 @@ instance View IndexView where
 renderBill :: Include "clientId" Bill -> Html
 renderBill bill = [hsx|
     <tr>
-        <td><a href={ShowBillAction (get #id bill)}>{getClientFullName client} {get #createdAt bill}</a></td>
+        <td><a href={ShowBillAction (get #id bill)}>{renderBillName bill}</a></td>
         <td><a href={EditBillAction (get #id bill)} class="text-muted">Edit</a></td>
         <td><a href={DeleteBillAction (get #id bill)} class="js-delete text-muted">Delete</a></td>
     </tr>

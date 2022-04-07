@@ -10,3 +10,13 @@ renderTrip trip = [hsx|
         <td><a href={DeleteTripAction (get #id trip)} class="js-delete text-muted">Delete</a></td>
     </tr>
 |]
+
+tripForm trip = [hsx|
+    {(textField #startCity)}
+    {(textField #destinationCity)}
+    {(dateField #date)}
+    {(numberField #price) {fieldLabel = "Price (€)", additionalAttributes = [("min","0")]}}
+    {(textField #billId)}
+    {submitButton}
+
+|]
