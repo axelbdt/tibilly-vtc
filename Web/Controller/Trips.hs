@@ -33,8 +33,8 @@ instance Controller TripsController where
         trip <- fetch tripId
         trip
             |> buildTrip
-            -- >>= ifValid \case
-            |> ifValid \case
+            |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
+            >>= ifValid \case
                 Left trip -> render EditView { .. }
                 Right trip -> do
                     trip <- trip |> updateRecord
@@ -87,26 +87,8 @@ buildTrip trip = trip
     |> validateField #startCity nonEmpty
     |> validateField #destinationCity nonEmpty
 
-
-{-
-parseAndSetPrice text record =
-    case readFloatWithComma text of
-        Left error  -> record |> attachFailure #price error
-        Right amount -> record |> set #price (eurosToCents amount)
-
-    
-readFloatWithComma :: Text -> Either Text Float
-readFloatWithComma text = case text |> T.replace "," "." |> T.unpack |> reads of
-    [(x, "")] -> Right x
-    _         -> Left "Invalid input"
-
-eurosToCents :: Float -> Int
-eurosToCents amount = round (100 * amount)
--}
-
 isGreaterOrEqualThan min value | value >= min = Success
 isGreaterOrEqualThan min value = Failure "Cannot be negative"
-
 
 validateBillBelongsToUser userId billId = do
     bill <- fetch billId
