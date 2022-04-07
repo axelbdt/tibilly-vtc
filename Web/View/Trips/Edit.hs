@@ -1,6 +1,8 @@
 module Web.View.Trips.Edit where
 import Web.View.Prelude
 
+import Web.View.Trips.Render
+
 data EditView = EditView { trip :: Trip }
 
 instance View EditView where
@@ -16,11 +18,4 @@ instance View EditView where
                 ]
 
 renderForm :: Trip -> Html
-renderForm trip = formFor trip [hsx|
-    {(textField #startCity)}
-    {(textField #destinationCity)}
-    {(textField #date)}
-    {(textField #billId)}
-    {submitButton}
-
-|]
+renderForm trip = formFor trip (tripForm trip)
