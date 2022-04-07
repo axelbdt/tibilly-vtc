@@ -1,13 +1,12 @@
-module Web.View.Trips.New where
+module Web.View.Trips.NewFromClient where
 import Web.View.Prelude
+data NewFromClientView = NewFromClientView {trip :: Trip, clientId :: Id Client}
 
-data NewView = NewView { trip :: Trip }
-
-instance View NewView where
-    html NewView { .. } = [hsx|
+instance View NewFromClientView where
+    html NewFromClientView { .. } = [hsx|
         {breadcrumb}
         <h1>New Trip</h1>
-        {renderForm trip}
+        {renderForm trip clientId}
     |]
         where
             breadcrumb = renderBreadcrumb
@@ -15,8 +14,8 @@ instance View NewView where
                 , breadcrumbText "New Trip"
                 ]
 
-renderForm :: Trip -> Html
-renderForm trip = formFor trip [hsx|
+renderForm :: Trip -> Id Client -> Html
+renderForm trip clientId = formFor' trip (pathTo (CreateTripAndBillAction clientId)) [hsx|
     {(textField #startCity)}
     {(textField #destinationCity)}
     {(dateField #date)}

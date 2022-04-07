@@ -13,6 +13,7 @@ instance View SelectClientView where
             breadcrumb = renderBreadcrumb
                 [ breadcrumbLink "Bills" BillsAction
                 , breadcrumbText "New Bill"
+                , breadcrumbText "Select Client"
                 ]
 
 renderForm :: Bill -> [Client] -> Html

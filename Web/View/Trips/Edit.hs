@@ -11,7 +11,7 @@ instance View EditView where
     |]
         where
             breadcrumb = renderBreadcrumb
-                [ breadcrumbLink "Trips" TripsAction
+                [ breadcrumbLink "Bills" BillsAction
                 , breadcrumbText "Edit Trip"
                 ]
 

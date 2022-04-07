@@ -5,15 +5,18 @@ import Text.Read (reads)
 import Data.Time.Calendar
 
 import Web.Controller.Prelude
-import Web.View.Trips.Index
 import Web.View.Trips.New
+import Web.View.Trips.NewFromClient
 import Web.View.Trips.Edit
-import Web.View.Trips.Show
+
+import Web.Controller.Bills (buildBill)
 
 instance Controller TripsController where
-    action TripsAction = do
-        trips <- query @Trip |> fetch
-        render IndexView { .. }
+    action NewTripFromClientAction { clientId } = do
+        currentTime <- getCurrentTime
+        let trip = newRecord
+              |> set #date (utctDay currentTime)
+        render NewFromClientView { .. }
 
     action NewTripAction { billId } = do
         currentTime <- getCurrentTime
@@ -21,10 +24,6 @@ instance Controller TripsController where
               |> set #billId billId
               |> set #date (utctDay currentTime)
         render NewView { .. }
-
-    action ShowTripAction { tripId } = do
-        trip <- fetch tripId
-        render ShowView { .. }
 
     action EditTripAction { tripId } = do
         trip <- fetch tripId
@@ -34,7 +33,8 @@ instance Controller TripsController where
         trip <- fetch tripId
         trip
             |> buildTrip
-            >>= ifValid \case
+            -- >>= ifValid \case
+            |> ifValid \case
                 Left trip -> render EditView { .. }
                 Right trip -> do
                     trip <- trip |> updateRecord
@@ -45,24 +45,49 @@ instance Controller TripsController where
         let trip = newRecord @Trip
         trip
             |> buildTrip
-            >>= ifValid \case
+            -- >>= ifValid \case
+            |> ifValid \case
                 Left trip -> render NewView { .. } 
                 Right trip -> do
                     trip <- trip |> createRecord
                     setSuccessMessage "Trip created"
                     redirectTo (ShowBillAction (get #billId trip))
 
+    action CreateTripAndBillAction { clientId }= do
+        ensureIsUser
+        let bill = newRecord @Bill
+        let trip = newRecord @Trip |> buildTrip
+        bill
+            |> buildBill
+            >>= ifValid \case
+                Left bill ->
+                    render NewFromClientView { .. }
+                Right bill ->
+                    trip
+                        |> buildTrip
+                        |> set #billId (get #id bill)
+                        |> ifValid \case
+                            Left trip -> do
+                                render NewFromClientView { .. }
+                            Right trip -> do
+                                bill <- bill |> createRecord
+                                trip <- trip |> set #billId (get #id bill) |> createRecord
+                                setSuccessMessage "Bill created"
+                                redirectTo (ShowBillAction (get #id bill))
+
     action DeleteTripAction { tripId } = do
         trip <- fetch tripId
         deleteRecord trip
         setSuccessMessage "Trip deleted"
-        redirectTo TripsAction
+        redirectTo (ShowBillAction (get #billId trip))
 
 buildTrip trip = trip
     |> fill @["startCity","destinationCity","date","billId", "price"]
     |> validateField #price (isGreaterOrEqualThan 0)
     |> validateField #startCity nonEmpty
     |> validateField #destinationCity nonEmpty
+
+buildTripAndValidateUser trip = trip
     |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
 
 {-

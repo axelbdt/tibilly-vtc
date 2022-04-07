@@ -8,6 +8,7 @@ import Web.View.Bills.SelectClient
 import Web.View.Bills.Edit
 import Web.View.Bills.Show
 
+
 instance Controller BillsController where
     action BillsAction = do
         ensureIsUser
@@ -57,6 +58,23 @@ instance Controller BillsController where
                     redirectTo EditBillAction { .. }
 
     action CreateBillAction = do
+        ensureIsUser
+        let bill = newRecord @Bill
+        bill
+            |> fill @["userId","clientId"]
+            |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
+            >>= ifValid \case
+                Left bill -> do
+                    userClients <- query @Client
+                        |> filterWhere (#userId, currentUserId)
+                        |> fetch
+                    render SelectClientView { .. } 
+                Right bill -> do
+                    redirectTo (NewTripFromClientAction (get #clientId bill))
+        redirectTo (NewTripFromClientAction (get #clientId bill))
+
+
+    action RealCreateBillAction = do
         ensureIsUser
         let bill = newRecord @Bill
         bill

@@ -34,6 +34,7 @@ data BillsController
     = BillsAction
     | NewBillSelectClientAction
     | ShowBillAction { billId :: !(Id Bill) }
+    | RealCreateBillAction
     | CreateBillAction
     | EditBillAction { billId :: !(Id Bill) }
     | UpdateBillAction { billId :: !(Id Bill) }
@@ -51,10 +52,10 @@ data ClientsController
     deriving (Eq, Show, Data)
 
 data TripsController
-    = TripsAction
-    | NewTripAction { billId :: !(Id Bill) }
-    | ShowTripAction { tripId :: !(Id Trip) }
+    = NewTripAction { billId :: !(Id Bill) }
+    | NewTripFromClientAction { clientId :: !(Id Client) }
     | CreateTripAction
+    | CreateTripAndBillAction { clientId :: !(Id Client) }
     | EditTripAction { tripId :: !(Id Trip) }
     | UpdateTripAction { tripId :: !(Id Trip) }
     | DeleteTripAction { tripId :: !(Id Trip) }
