@@ -19,7 +19,7 @@ instance Controller BillsController where
             >>= collectionFetchRelated #clientId
         render IndexView { .. }
 
-    action NewBillSelectClientAction = do
+    action NewBillSelectClientPromptAction = do
         ensureIsUser
         userClients <- query @Client
              |> filterWhere (#userId, currentUserId)
@@ -57,7 +57,7 @@ instance Controller BillsController where
                     setSuccessMessage "Bill updated"
                     redirectTo EditBillAction { .. }
 
-    action CreateBillAction = do
+    action NewBillSelectClientAction = do
         ensureIsUser
         let bill = newRecord @Bill
         bill

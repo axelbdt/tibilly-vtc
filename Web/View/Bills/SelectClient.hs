@@ -17,7 +17,7 @@ instance View SelectClientView where
                 ]
 
 renderForm :: Bill -> [Client] -> Html
-renderForm bill userClients = formFor bill [hsx|
+renderForm bill userClients = formFor' bill (pathTo NewBillSelectClientAction) [hsx|
     {(hiddenField #userId)}
     <div class="d-flex flex-row justify-content-between">
       <div class="flex-fill pr-2">{(selectField #clientId userClients)}</div>

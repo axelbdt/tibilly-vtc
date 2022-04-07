@@ -32,9 +32,9 @@ data UsersController
 
 data BillsController
     = BillsAction
-    | NewBillSelectClientAction
+    | NewBillSelectClientPromptAction
     | ShowBillAction { billId :: !(Id Bill) }
-    | CreateBillAction
+    | NewBillSelectClientAction
     | EditBillAction { billId :: !(Id Bill) }
     | UpdateBillAction { billId :: !(Id Bill) }
     | DeleteBillAction { billId :: !(Id Bill) }
