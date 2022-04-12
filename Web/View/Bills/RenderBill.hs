@@ -42,7 +42,7 @@ instance View RenderBillView where
 renderTrip :: Trip -> Html
 renderTrip trip = [hsx|
     <tr>
-        <td>{get #startCity trip} - {get #destinationCity trip}</td>
+        <td>{get #start trip} - {get #destination trip}</td>
         <td>{renderPrice (get #price trip)}€</td>
     </tr>
 |]

@@ -4,7 +4,7 @@ import Web.View.Prelude
 renderTrip :: Trip -> Html
 renderTrip trip = [hsx|
     <tr>
-        <td>{get #startCity trip} - {get #destinationCity trip}</td>
+        <td>{get #start trip} - {get #destination trip}</td>
         <td>{renderPrice (get #price trip)}€</td>
         <td><a href={EditTripAction (get #id trip)} class="text-muted">Edit</a></td>
         <td><a href={DeleteTripAction (get #id trip)} class="js-delete text-muted">Delete</a></td>
@@ -12,8 +12,8 @@ renderTrip trip = [hsx|
 |]
 
 tripForm trip = [hsx|
-    {(textField #startCity)}
-    {(textField #destinationCity)}
+    {(textField #start)}
+    {(textField #destination)}
     {(dateField #date)}
     {(numberField #price) {fieldLabel = "Price (€)", additionalAttributes = [("min","0")]}}
     {(hiddenField #billId)}

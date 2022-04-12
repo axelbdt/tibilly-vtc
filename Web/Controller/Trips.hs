@@ -82,10 +82,10 @@ instance Controller TripsController where
         redirectTo (ShowBillAction (get #billId trip))
 
 buildTrip trip = trip
-    |> fill @["startCity","destinationCity","date","billId", "price"]
+    |> fill @["start","destination","date","billId", "price"]
     |> validateField #price (isGreaterOrEqualThan 0)
-    |> validateField #startCity nonEmpty
-    |> validateField #destinationCity nonEmpty
+    |> validateField #start nonEmpty
+    |> validateField #destination nonEmpty
 
 isGreaterOrEqualThan min value | value >= min = Success
 isGreaterOrEqualThan min value = Failure "Cannot be negative"

@@ -12,12 +12,13 @@ CREATE TABLE bills (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     user_id UUID NOT NULL,
     client_id UUID NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    sent_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
 );
 CREATE TABLE trips (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
-    start_city TEXT NOT NULL,
-    destination_city TEXT NOT NULL,
+    "start" TEXT NOT NULL,
+    destination TEXT NOT NULL,
     date DATE DEFAULT NOW() NOT NULL,
     bill_id UUID NOT NULL,
     price INT NOT NULL
