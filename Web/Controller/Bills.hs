@@ -9,10 +9,17 @@ import Web.View.Bills.Edit
 import Web.View.Bills.Show
 import Web.View.Bills.CheckBeforeSend
 
+import Web.View.Bills.RenderBill
 
 instance Controller BillsController where
-    action GenerateBillPDFAction { billId }= do
-        redirectTo (CheckBeforeSendBillAction billId)
+    action GenerateBillPDFAction { billId } = do
+        ensureIsUser
+        bill <- fetch billId
+            >>= fetchRelated #clientId
+            >>= fetchRelated #trips
+        let priceIncludingTax = computePriceIncludingTax bill
+        let priceExcludingTax = excludeTax priceIncludingTax
+        renderPdf RenderBillView { .. }
 
     action BillsAction = do
         ensureIsUser

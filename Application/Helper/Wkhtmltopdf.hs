@@ -9,6 +9,7 @@ import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
 import qualified System.Info as SI
 import Data.Text as T (unpack)
+import Data.ByteString.Lazy as BL (fromStrict)
 import IHP.Prelude
 
 convertBytestring :: LByteString -> IO B.ByteString
@@ -23,9 +24,8 @@ convertBytestring bs = do
 
         cprocess = procWith $ proc "wkhtmltopdf" opts
 
-
-        opts = map T.unpack ["--encoding", "utf-8" , "-", "-"]
+        opts = map T.unpack ["--user-style-sheet","build/ihp-lib/static/vendor/bootstrap.min.css","--enable-local-file-access","--encoding", "utf-8" , "-", "-"]
 
 -- Convert the given html and return the pdf as a strict bytestring.
-convertHtml :: Html -> IO B.ByteString
-convertHtml = convertBytestring . renderHtml
+convertHtml :: Html -> IO LByteString
+convertHtml = fmap fromStrict . convertBytestring . renderHtml
