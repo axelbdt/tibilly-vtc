@@ -21,5 +21,5 @@ instance View CheckBeforeSendView where
                                 , breadcrumbText "Check Bill"
                                 ]
                 sendButton = [hsx|
-                    <a href={pathTo SendBillAction} class="btn btn-primary">Send</a>
+                    <a href={pathTo (SendBillAction (get #id bill))} class="btn btn-primary">Send</a>
                 |]

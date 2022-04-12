@@ -11,15 +11,33 @@ import Web.View.Bills.CheckBeforeSend
 
 import Web.View.Bills.RenderBill
 
+import Application.Helper.Wkhtmltopdf
+import Network.HTTP.Types (status200)
+import Network.HTTP.Types.Header
+import Network.Wai (responseLBS)
+
+renderPdf view = do
+    viewHtml <- renderHtml view 
+    convertHtml viewHtml
+
+renderPDFResponse view = do
+    pdfBytes <- renderPdf view
+    respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes
+
 instance Controller BillsController where
     action GenerateBillPDFAction { billId } = do
         ensureIsUser
         bill <- fetch billId
             >>= fetchRelated #clientId
             >>= fetchRelated #trips
+        accessDeniedUnless (get #userId bill == currentUserId)
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
-        renderPdf RenderBillView { .. }
+        renderPDFResponse RenderBillView { .. }
+
+    action SendBillAction { billId } = do
+        redirectTo BillsAction
+
 
     action BillsAction = do
         ensureIsUser
@@ -43,9 +61,9 @@ instance Controller BillsController where
         bill <- fetch billId
             >>= fetchRelated #clientId
             >>= fetchRelated #trips
+        accessDeniedUnless (get #userId bill == currentUserId)
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
-        accessDeniedUnless (get #userId bill == currentUserId)
         render ShowView { .. }
 
     action EditBillAction { billId } = do

@@ -28,7 +28,6 @@ data UsersController
     | EditUserAction { userId :: !(Id User) }
     | UpdateUserAction { userId :: !(Id User) }
     | DeleteUserAction { userId :: !(Id User) }
-    | SendBillAction
     deriving (Eq, Show, Data)
 
 data BillsController
@@ -41,6 +40,7 @@ data BillsController
     | UpdateBillAction { billId :: !(Id Bill) }
     | DeleteBillAction { billId :: !(Id Bill) }
     | GenerateBillPDFAction { billId :: !(Id Bill) }
+    | SendBillAction { billId :: !(Id Bill) }
     deriving (Eq, Show, Data)
 
 data ClientsController
