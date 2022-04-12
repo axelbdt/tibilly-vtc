@@ -7,6 +7,9 @@ import Web.View.Users.Edit
 import Web.View.Users.Show
 
 instance Controller UsersController where
+    action SendBillAction = do
+        redirectTo UsersAction
+
     action UsersAction = do
         users <- query @User |> fetch
         render IndexView { .. }
