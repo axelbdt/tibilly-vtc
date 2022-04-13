@@ -41,6 +41,7 @@ data BillsController
     | DeleteBillAction { billId :: !(Id Bill) }
     | GenerateBillPDFAction { billId :: !(Id Bill) }
     | SendBillAction { billId :: !(Id Bill) }
+    | SendBillSuccessAction { billId :: !(Id Bill) }
     deriving (Eq, Show, Data)
 
 data ClientsController

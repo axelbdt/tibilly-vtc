@@ -15,16 +15,25 @@ import Application.Helper.Wkhtmltopdf
 import Network.HTTP.Types (status200)
 import Network.HTTP.Types.Header
 import Network.Wai (responseLBS)
+import Web.Mail.Bills.SendBillToClient
 
-renderPdf view = do
+renderPDF view = do
     viewHtml <- renderHtml view 
     convertHtml viewHtml
 
 renderPDFResponse view = do
-    pdfBytes <- renderPdf view
+    pdfBytes <- renderPDF view
     respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes
 
 instance Controller BillsController where
+    action SendBillSuccessAction { billId } = do
+        bill <- fetch billId
+        currentTime <- getCurrentTime
+        bill
+            |> set #sentAt (Just currentTime)
+            |> updateRecord
+        redirectTo BillsAction
+
     action GenerateBillPDFAction { billId } = do
         ensureIsUser
         bill <- fetch billId
@@ -36,7 +45,23 @@ instance Controller BillsController where
         renderPDFResponse RenderBillView { .. }
 
     action SendBillAction { billId } = do
-        redirectTo BillsAction
+        ensureIsUser
+        bill <- fetch billId
+            >>= fetchRelated #clientId
+            >>= fetchRelated #trips
+        accessDeniedUnless (get #userId bill == currentUserId)
+        let priceIncludingTax = computePriceIncludingTax bill
+        let priceExcludingTax = excludeTax priceIncludingTax
+        case get #sentAt bill of
+            Nothing -> do
+                user <- fetch (get #userId bill)
+                pdf <- renderPDF RenderBillView { .. }
+                setSuccessMessage "Bill sent"
+                sendMail SendBillToClientMail { .. }
+                redirectTo (SendBillSuccessAction billId)
+            Just _ -> do
+                redirectTo BillsAction
+
 
 
     action BillsAction = do
