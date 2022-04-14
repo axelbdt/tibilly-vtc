@@ -14,6 +14,8 @@ instance HasNewSessionUrl User where
 
 type instance CurrentUserRecord = User
 
+data PriceInfo  = PriceInfo { includingTax :: Int, excludingTax :: Float, taxAmount :: Float}
+
 data SessionsController
     = NewSessionAction
     | CreateSessionAction

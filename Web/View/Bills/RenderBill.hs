@@ -49,7 +49,6 @@ instance View RenderBillView where
         where
             client = get #clientId bill
             user = get #userId bill
-               
 
 
 renderTrip :: Trip -> Html

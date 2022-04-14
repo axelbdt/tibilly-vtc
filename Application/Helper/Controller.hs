@@ -1,8 +1,16 @@
 module Application.Helper.Controller where
 
+import Application.Helper.Wkhtmltopdf
+import Network.HTTP.Types (status200)
+import Network.HTTP.Types.Header
+import Network.Wai (responseLBS)
+
 import IHP.ControllerPrelude
 
- 
+renderPDF view = do
+    viewHtml <- renderHtml view 
+    convertHtml viewHtml
 
-
--- Here you can add functions which are available in all your controllers
+renderPDFResponse view = do
+    pdfBytes <- renderPDF view
+    respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes

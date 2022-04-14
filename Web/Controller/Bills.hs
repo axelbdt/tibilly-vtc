@@ -13,27 +13,10 @@ import Web.View.Bills.RenderBill
 
 import Web.Mail.Bills.SendBillToClient
 
-import Application.Helper.Wkhtmltopdf
-import Network.HTTP.Types (status200)
-import Network.HTTP.Types.Header
-import Network.Wai (responseLBS)
-
-renderPDF view = do
-    viewHtml <- renderHtml view 
-    convertHtml viewHtml
-
-renderPDFResponse view = do
-    pdfBytes <- renderPDF view
-    respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes
-
-
 instance Controller BillsController where
     action BillRenderPreviewAction { billId }= do
         ensureIsUser
-        bill <- fetch billId
-            >>= fetchRelated #userId
-            >>= fetchRelated #clientId
-            >>= fetchRelated #trips
+        bill <- fetchBillInfo billId
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
@@ -50,10 +33,7 @@ instance Controller BillsController where
 
     action GenerateBillPDFAction { billId } = do
         ensureIsUser
-        bill <- fetch billId
-            >>= fetchRelated #userId
-            >>= fetchRelated #clientId
-            >>= fetchRelated #trips
+        bill <- fetchBillInfo billId
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
@@ -62,10 +42,7 @@ instance Controller BillsController where
 
     action SendBillAction { billId } = do
         ensureIsUser
-        bill <- fetch billId
-            >>= fetchRelated #userId
-            >>= fetchRelated #clientId
-            >>= fetchRelated #trips
+        bill <- fetchBillInfo billId
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
@@ -104,9 +81,7 @@ instance Controller BillsController where
             >>= fetchRelated #clientId
             >>= fetchRelated #trips
         accessDeniedUnless (get #userId bill == currentUserId)
-        let priceIncludingTax = computePriceIncludingTax bill
-        let priceExcludingTax = excludeTax priceIncludingTax
-        let taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
+        let priceInfo = billPriceInfo bill
         render ShowView { .. }
 
     action EditBillAction { billId } = do
@@ -160,6 +135,23 @@ buildBill bill = bill
     |> fill @["userId","clientId"]
     |> set #userId currentUserId
     |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
+
+fetchBillInfo billId = do
+    fetch billId
+        >>= fetchRelated #userId
+        >>= fetchRelated #clientId
+        >>= fetchRelated #trips
+
+
+billPriceInfo bill = PriceInfo {
+                        includingTax = priceIncludingTax,
+                        excludingTax = priceExcludingTax,
+                        taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
+                        }
+                            where
+                                priceIncludingTax = computePriceIncludingTax bill
+                                priceExcludingTax = excludeTax priceIncludingTax
+
 
 validateClientBelongsToUser userId clientId = do
     if clientId == "00000000-0000-0000-0000-000000000000" then
