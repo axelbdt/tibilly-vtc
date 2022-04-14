@@ -2,7 +2,7 @@ module Web.Mail.Bills.SendBillToClient where
 import Web.View.Prelude
 import IHP.MailPrelude
 
-data SendBillToClientMail = SendBillToClientMail { bill :: Include' ["clientId", "trips"] Bill, user :: User, pdf :: LByteString }
+data SendBillToClientMail = SendBillToClientMail { bill :: Include' ["userId","clientId", "trips"] Bill, pdf :: LByteString }
 
 instance BuildMail SendBillToClientMail where
     subject = "Your transport bill"
@@ -11,6 +11,7 @@ instance BuildMail SendBillToClientMail where
     cc SendBillToClientMail { .. } = [
         Address { addressName = Just (renderUserFullName user), addressEmail = get #email user }
         ]
+        where user = get #userId bill
     from = Address { addressName = Just "Tibilly Facturation", addressEmail = "factures@tibilly.fr" }
     html SendBillToClientMail { .. } = [hsx|
         Hello World

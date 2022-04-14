@@ -42,6 +42,7 @@ data BillsController
     | GenerateBillPDFAction { billId :: !(Id Bill) }
     | SendBillAction { billId :: !(Id Bill) }
     | SendBillSuccessAction { billId :: !(Id Bill) }
+    | BillRenderPreviewAction
     deriving (Eq, Show, Data)
 
 data ClientsController

@@ -1,13 +1,17 @@
 module Web.View.Bills.RenderBill where
 import Web.View.Prelude
 
-data RenderBillView = RenderBillView{ bill :: Include' ["clientId", "trips"] Bill, priceIncludingTax :: Int, priceExcludingTax :: Float } 
+data RenderBillView = RenderBillView{ bill :: Include' ["userId","clientId", "trips"] Bill, priceIncludingTax :: Int, priceExcludingTax :: Float } 
 
 instance View RenderBillView where
     beforeRender view = do
         setLayout (\view -> view)
 
     html RenderBillView { .. } = [hsx|
+        <h1>Facture - Transport de personnes</h1>
+        <h2>Transporteur</h2>
+        <p>Placeholder</p>
+        <h2>Client</h2>
         <p>{get #clientId bill |> renderClientFullName}</p>
 
         <div class="table-responsive">

@@ -25,7 +25,20 @@ renderPDFResponse view = do
     pdfBytes <- renderPDF view
     respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes
 
+
 instance Controller BillsController where
+    action BillRenderPreviewAction = do
+        ensureIsUser
+        bill <- fetch billId
+            >>= fetchRelated #userId
+            >>= fetchRelated #clientId
+            >>= fetchRelated #trips
+        accessDeniedUnless (currentUserId == get #id (get #userId bill))
+        let priceIncludingTax = computePriceIncludingTax bill
+        let priceExcludingTax = excludeTax priceIncludingTax
+        render RenderBillView { .. }
+        redirectTo BillsAction
+
     action SendBillSuccessAction { billId } = do
         bill <- fetch billId
         currentTime <- getCurrentTime
@@ -37,9 +50,10 @@ instance Controller BillsController where
     action GenerateBillPDFAction { billId } = do
         ensureIsUser
         bill <- fetch billId
+            >>= fetchRelated #userId
             >>= fetchRelated #clientId
             >>= fetchRelated #trips
-        accessDeniedUnless (get #userId bill == currentUserId)
+        accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
         renderPDFResponse RenderBillView { .. }
@@ -47,14 +61,14 @@ instance Controller BillsController where
     action SendBillAction { billId } = do
         ensureIsUser
         bill <- fetch billId
+            >>= fetchRelated #userId
             >>= fetchRelated #clientId
             >>= fetchRelated #trips
-        accessDeniedUnless (get #userId bill == currentUserId)
+        accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
         case get #sentAt bill of
             Nothing -> do
-                user <- fetch (get #userId bill)
                 pdf <- renderPDF RenderBillView { .. }
                 setSuccessMessage "Bill sent"
                 sendMail SendBillToClientMail { .. }
