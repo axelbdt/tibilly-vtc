@@ -16,6 +16,7 @@ instance Controller UsersController where
 
     action EditUserAction { userId } = do
         user <- fetch userId
+        let user = user |> set #passwordHash ""
         render EditView { .. }
 
     action UpdateUserAction { userId } = do

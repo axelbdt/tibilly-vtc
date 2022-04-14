@@ -1,25 +1,11 @@
 module Web.View.Users.Edit where
 import Web.View.Prelude
+import Web.View.Users.Render (renderForm)
 
 data EditView = EditView { user :: User }
 
 instance View EditView where
     html EditView { .. } = [hsx|
-        {breadcrumb}
-        <h1>Edit User</h1>
-        {renderForm user}
+        <h1>Mon compte</h1>
+        {renderForm user "Modifier"}
     |]
-        where
-            breadcrumb = renderBreadcrumb
-                [ breadcrumbLink "Users" UsersAction
-                , breadcrumbText "Edit User"
-                ]
-
-renderForm :: User -> Html
-renderForm user = formFor user [hsx|
-    {(textField #email)}
-    {(textField #passwordHash)}
-    {(textField #failedLoginAttempts)}
-    {submitButton}
-
-|]

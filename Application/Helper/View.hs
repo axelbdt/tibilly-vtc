@@ -21,3 +21,9 @@ renderUTCTime :: UTCTime -> Text
 renderUTCTime = T.pack . formatTime  defaultTimeLocale "%D"
 
 renderBillName bill = renderClientFullName (get #clientId bill) ++ " " ++ renderUTCTime (get #createdAt bill)
+
+formFrame inner = [hsx|
+    <div class="w-75 mx-auto border p-5 shadow rounded">
+        {inner}
+    </div>
+|]
