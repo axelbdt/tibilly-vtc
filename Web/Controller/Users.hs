@@ -4,7 +4,6 @@ import Web.Controller.Prelude
 import Web.View.Users.Index
 import Web.View.Users.New
 import Web.View.Users.Edit
-import Web.View.Users.Show
 
 instance Controller UsersController where
     action UsersAction = do
@@ -14,11 +13,6 @@ instance Controller UsersController where
     action NewUserAction = do
         let user = newRecord
         render NewView { .. }
-
-    action ShowUserAction { userId } = do
-        accessDeniedUnless (currentUserId == userId)
-        user <- fetch userId
-        render ShowView { .. }
 
     action EditUserAction { userId } = do
         user <- fetch userId
