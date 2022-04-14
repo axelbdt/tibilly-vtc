@@ -1,7 +1,8 @@
 module Web.View.Bills.RenderBill where
 import Web.View.Prelude
 
-data RenderBillView = RenderBillView{ bill :: Include' ["userId","clientId", "trips"] Bill, priceIncludingTax :: Int, priceExcludingTax :: Float } 
+
+data RenderBillView = RenderBillView { bill :: Include' ["userId","clientId", "trips"] Bill, priceIncludingTax :: Int, priceExcludingTax :: Float }
 
 instance View RenderBillView where
     beforeRender view = do
@@ -9,38 +10,43 @@ instance View RenderBillView where
 
     html RenderBillView { .. } = [hsx|
         <h1>Facture - Transport de personnes</h1>
-        <h2>Transporteur</h2>
-        <p>Placeholder</p>
-        <h2>Client</h2>
-        <p>{get #clientId bill |> renderClientFullName}</p>
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2>Client</h2>
+                <p>{get #clientId bill |> renderClientFullName}</p>
+            </div>
+            <div>
+                <h2>Transporteur</h2>
+                <p>{renderUserFullName user}</p>
+            </div>
+        </div>
+        
 
+        <h2>Course</h2>
         <div class="table-responsive">
             <table class="table">
-                <thead>
-                    <tr>
-                        <th>Trips</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
                 <tbody>{forEach (get #trips bill) renderTrip}</tbody>
                 <tfoot>
                     <tr>
-                        <th class="text-right">Total excl. VAT</th>
+                        <th class="text-right">Total HT</th>
                         <th>{renderDecimalPrice priceExcludingTax}€</th>
                     </tr>
                     <tr>
-                      <th class="text-right">VAT rate</th>
+                      <th class="text-right">TVA (10%)</th>
                       <th>10%</th>
                     </tr>
                     <tr>
-                        <th class="text-right">Total incl. VAT</th>
+                        <th class="text-right">Total TTC</th>
                         <th>{renderPrice priceIncludingTax}€</th>
                     </tr>
                 </tfoot>
             </table>
         </div>
         |]
+        where
+            client = get #clientId bill
+            user = get #userId bill
+              
 
 
 renderTrip :: Trip -> Html

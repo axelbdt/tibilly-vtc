@@ -11,11 +11,12 @@ import Web.View.Bills.CheckBeforeSend
 
 import Web.View.Bills.RenderBill
 
+import Web.Mail.Bills.SendBillToClient
+
 import Application.Helper.Wkhtmltopdf
 import Network.HTTP.Types (status200)
 import Network.HTTP.Types.Header
 import Network.Wai (responseLBS)
-import Web.Mail.Bills.SendBillToClient
 
 renderPDF view = do
     viewHtml <- renderHtml view 
@@ -27,7 +28,7 @@ renderPDFResponse view = do
 
 
 instance Controller BillsController where
-    action BillRenderPreviewAction = do
+    action BillRenderPreviewAction { billId }= do
         ensureIsUser
         bill <- fetch billId
             >>= fetchRelated #userId
@@ -37,7 +38,6 @@ instance Controller BillsController where
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
         render RenderBillView { .. }
-        redirectTo BillsAction
 
     action SendBillSuccessAction { billId } = do
         bill <- fetch billId
