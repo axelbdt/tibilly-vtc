@@ -1,22 +1,17 @@
 module Web.Controller.Users where
 
 import Web.Controller.Prelude
-import Web.View.Users.Index
 import Web.View.Users.New
 import Web.View.Users.Edit
 
 instance Controller UsersController where
-    action UsersAction = do
-        users <- query @User |> fetch
-        render IndexView { .. }
-
     action NewUserAction = do
         let user = newRecord
         render NewView { .. }
 
-    action EditUserAction { userId } = do
-        user <- fetch userId
-        let user = user |> set #passwordHash ""
+    action ShowCurrentUserAction = do
+        user <- fetch currentUserId
+                    |> fmap (set #passwordHash "")
         render EditView { .. }
 
     action UpdateUserAction { userId } = do
@@ -53,11 +48,6 @@ instance Controller UsersController where
                     redirectTo NewSessionAction
     -}
 
-    action DeleteUserAction { userId } = do
-        user <- fetch userId
-        deleteRecord user
-        setSuccessMessage "Utilisateur supprimé"
-        redirectTo UsersAction
 
 -- TODO: translate error messages
 buildUser user = user
