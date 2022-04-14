@@ -5,7 +5,6 @@ import Data.Time.Calendar
 import Web.Controller.Prelude
 import Web.View.Bills.Index
 import Web.View.Bills.SelectClient
-import Web.View.Bills.Edit
 import Web.View.Bills.Show
 import Web.View.Bills.CheckBeforeSend
 
@@ -84,30 +83,10 @@ instance Controller BillsController where
         let priceInfo = billPriceInfo bill
         render ShowView { .. }
 
-    action EditBillAction { billId } = do
-        ensureIsUser
-        bill <- fetch billId
-        accessDeniedUnless (get #userId bill == currentUserId)
-        render EditView { .. }
-
     action CheckBeforeSendBillAction { billId } = do
         ensureIsUser
         bill <- fetch billId
         render CheckBeforeSendView { .. }
-
-    action UpdateBillAction { billId } = do
-        ensureIsUser
-        bill <- fetch billId
-        accessDeniedUnless (get #userId bill == currentUserId)
-        bill
-            |> buildBill
-            >>= ifValid \case
-                Left bill -> render EditView { .. }
-                Right bill -> do
-                    bill <- bill
-                        |> updateRecord
-                    setSuccessMessage "Bill updated"
-                    redirectTo EditBillAction { .. }
 
     action NewBillSelectClientAction = do
         ensureIsUser

@@ -35,8 +35,6 @@ data BillsController
     | ShowBillAction { billId :: !(Id Bill) }
     | CheckBeforeSendBillAction { billId :: !(Id Bill) }
     | NewBillSelectClientAction
-    | EditBillAction { billId :: !(Id Bill) }
-    | UpdateBillAction { billId :: !(Id Bill) }
     | DeleteBillAction { billId :: !(Id Bill) }
     | GenerateBillPDFAction { billId :: !(Id Bill) }
     | SendBillAction { billId :: !(Id Bill) }
