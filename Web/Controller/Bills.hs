@@ -37,6 +37,7 @@ instance Controller BillsController where
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
+        let taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
         render RenderBillView { .. }
 
     action SendBillSuccessAction { billId } = do
@@ -56,6 +57,7 @@ instance Controller BillsController where
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
+        let taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
         renderPDFResponse RenderBillView { .. }
 
     action SendBillAction { billId } = do
@@ -67,6 +69,7 @@ instance Controller BillsController where
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
+        let taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
         case get #sentAt bill of
             Nothing -> do
                 pdf <- renderPDF RenderBillView { .. }
@@ -103,6 +106,7 @@ instance Controller BillsController where
         accessDeniedUnless (get #userId bill == currentUserId)
         let priceIncludingTax = computePriceIncludingTax bill
         let priceExcludingTax = excludeTax priceIncludingTax
+        let taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
         render ShowView { .. }
 
     action EditBillAction { billId } = do
@@ -171,4 +175,4 @@ validateClientBelongsToUser userId clientId = do
 computePriceIncludingTax bill = bill |> get #trips |> map (get #price) |> sum
 
 excludeTax :: Int -> Float
-excludeTax price = fromIntegral price * (1.0 - 0.1)
+excludeTax price = fromIntegral price / (1.0 + 0.1)
