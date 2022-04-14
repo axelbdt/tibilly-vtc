@@ -5,7 +5,7 @@ import Web.View.Prelude
 instance View (NewView User) where
     html NewView { .. } = [hsx|
         <div class="w-75 mx-auto border p-5 shadow rounded">
-            <h1 class="text-center">Log in</h1>
+            <h1 class="text-center">Connexion</h1>
             {renderForm user}
         </div>
     |]
@@ -17,8 +17,8 @@ renderForm user = [hsx|
             <input name="email" value={get #email user} type="email" class="form-control" placeholder="E-Mail" required="required" autofocus="autofocus" />
         </div>
         <div class="form-group">
-            <input name="password" type="password" class="form-control" placeholder="Password"/>
+            <input name="password" type="password" class="form-control" placeholder="Mot de passe"/>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Login</button>
+        <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
     </form>
 |]
