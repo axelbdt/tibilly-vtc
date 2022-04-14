@@ -11,7 +11,7 @@ import Web.Routes
 import Application.Helper.View
 
 defaultLayout :: Html -> Html
-defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
+defaultLayout inner = H.docTypeHtml ! A.lang "fr" $ [hsx|
 <head>
     {metaTags}
 

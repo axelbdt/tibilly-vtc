@@ -7,8 +7,7 @@ data ShowView = ShowView { bill :: Include' ["clientId", "trips"] Bill, priceInf
  
 instance View ShowView where
     html ShowView { .. } = [hsx|
-        {breadcrumb}
-        <h1>Bill</h1>
+        <h1>Facture</h1>
         <p>{get #clientId bill |> renderClientFullName}</p>
 
         <div class="table-responsive">
@@ -29,9 +28,3 @@ instance View ShowView where
         </div>
 
     |]
-        where
-            breadcrumb = renderBreadcrumb
-                            [ breadcrumbLink "Bills" BillsAction
-                            , breadcrumbText "Show Bill"
-                            ]
-
