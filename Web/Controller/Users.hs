@@ -35,7 +35,7 @@ instance Controller UsersController where
 
     action CreateUserAction = do
     -- {-
-        setErrorMessage "Sign up is disabled, sorry!"
+        setErrorMessage "Inscription momentanément désactivée, désolé!"
         redirectTo NewSessionAction
     -- -}
     {-
@@ -49,16 +49,17 @@ instance Controller UsersController where
                     user <- user
                         |> set #passwordHash hashed
                         |> createRecord
-                    setSuccessMessage "You have successfully registered"
+                    setSuccessMessage "Votre compte a été créé"
                     redirectTo NewSessionAction
     -}
 
     action DeleteUserAction { userId } = do
         user <- fetch userId
         deleteRecord user
-        setSuccessMessage "User deleted"
+        setSuccessMessage "Utilisateur supprimé"
         redirectTo UsersAction
 
+-- TODO: translate error messages
 buildUser user = user
     |> fill @["email","firstName","lastName","passwordHash","failedLoginAttempts"]
     |> validateField #email isEmail
@@ -70,4 +71,4 @@ buildUser user = user
 
 passwordMatch pw1 pw2 = if pw1 == pw2
         then Success
-        else Failure "The passwords don't match"
+        else Failure "Les mots de passe ne correspondent pas"
