@@ -80,7 +80,15 @@ instance Controller BillsController where
     action CheckBeforeSendBillAction { billId } = do
         ensureIsUser
         bill <- fetch billId
-        render CheckBeforeSendView { .. }
+        accessDeniedUnless (get #userId bill == currentUserId)
+        tripCount <- query @Trip
+            |> filterWhere (#billId, billId)
+            |> fetchCount
+        if tripCount == 0 then do
+            setErrorMessage "Ajoutez une course à la facture"
+            redirectTo (ShowBillAction billId)
+        else do
+            render CheckBeforeSendView { .. }
 
     action NewBillSelectClientAction = do
         ensureIsUser
