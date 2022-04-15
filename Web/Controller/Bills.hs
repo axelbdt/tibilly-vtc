@@ -43,7 +43,7 @@ instance Controller BillsController where
         case get #sentAt bill of
             Nothing -> do
                 pdf <- renderPDF RenderBillView { .. }
-                setSuccessMessage "Bill sent"
+                setSuccessMessage "Facture envoyée"
                 sendMail SendBillToClientMail { .. }
                 redirectTo (SendBillSuccessAction billId)
             Just _ -> do
@@ -101,7 +101,7 @@ instance Controller BillsController where
         bill <- fetch billId
         accessDeniedUnless (get #userId bill == currentUserId)
         deleteRecord bill
-        setSuccessMessage "Bill deleted"
+        setSuccessMessage "Facture supprimée"
         redirectTo BillsAction
 
 buildBill bill = bill
@@ -128,14 +128,14 @@ billPriceInfo bill = PriceInfo {
 
 validateClientBelongsToUser userId clientId = do
     if clientId == "00000000-0000-0000-0000-000000000000" then
-        return (Failure "Please select a client")
+        return (Failure "Sélectionnez un client")
     else do
       client <- fetch clientId
       return
           if userId == get #userId client then
               Success
           else
-              Failure "Not yours"
+              Failure "Ce client ne vous appartient pas"
 
 computePriceIncludingTax bill = bill |> get #trips |> map (get #price) |> sum
 
