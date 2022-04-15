@@ -18,7 +18,10 @@ renderDecimalPrice :: Float -> Text
 renderDecimalPrice = T.pack . printf "%.2f"
 
 renderUTCTime :: UTCTime -> Text
-renderUTCTime = T.pack . formatTime  defaultTimeLocale "%F"
+renderUTCTime = T.pack . formatTime defaultTimeLocale "%F"
+
+renderDay :: Day -> Text
+renderDay = T.pack . formatTime defaultTimeLocale "%d/%m/%Y"
 
 renderBillName bill = renderClientFullName (get #clientId bill) ++ " " ++ renderUTCTime (get #createdAt bill)
 

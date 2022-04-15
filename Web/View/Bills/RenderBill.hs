@@ -1,5 +1,6 @@
 module Web.View.Bills.RenderBill where
 import Web.View.Prelude
+import Web.View.Trips.Render (renderTripDescription)
 
 
 data RenderBillView = RenderBillView { bill :: Include' ["userId","clientId", "trips"] Bill, priceIncludingTax :: Int, priceExcludingTax :: Float, taxAmount :: Float }
@@ -31,16 +32,16 @@ instance View RenderBillView where
                 <tbody>{forEach (get #trips bill) renderTrip}</tbody>
                 <tfoot>
                     <tr>
-                        <th class="text-right">Total HT</th>
-                        <th>{renderDecimalPrice priceExcludingTax}€</th>
+                        <th class="text-right pr-3">Total HT</th>
+                        <th class="text-lift">{renderDecimalPrice priceExcludingTax}€</th>
                     </tr>
                     <tr>
-                      <th class="text-right">TVA (10%)</th>
-                      <th>{renderDecimalPrice taxAmount}€</th>
+                      <th class="text-right pr-3">TVA (10%)</th>
+                      <th class="text-left">{renderDecimalPrice taxAmount}€</th>
                     </tr>
                     <tr style="font-size:2em">
-                        <th class="text-right fs-1">Total TTC</th>
-                        <th>{renderPrice priceIncludingTax}€</th>
+                        <th class="text-right pr-3">Total TTC</th>
+                        <th class="text-left">{renderPrice priceIncludingTax}€</th>
                     </tr>
                 </tfoot>
             </table> 
@@ -54,7 +55,7 @@ instance View RenderBillView where
 renderTrip :: Trip -> Html
 renderTrip trip = [hsx|
     <tr>
-        <td>{get #start trip} - {get #destination trip}</td>
-        <td>{renderPrice (get #price trip)}€</td>
+        <td>{renderTripDescription trip}</td>
+        <td class="text-left">{renderPrice (get #price trip)}€</td>
     </tr>
 |] 
