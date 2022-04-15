@@ -1,7 +1,7 @@
 module Web.View.Bills.Show where
 import Web.View.Prelude
-import Web.View.Trips.Render
 import Web.View.Bills.Render
+import Web.View.Trips.Render
 
 data ShowView = ShowView { bill :: Include' ["clientId", "trips"] Bill, priceInfo :: PriceInfo }
  
