@@ -1,9 +1,10 @@
 module Web.View.Bills.RenderBill where
 import Web.View.Prelude
+import Web.View.Bills.Render
 import Web.View.Trips.Render (renderTripDescription)
 
 
-data RenderBillView = RenderBillView { bill :: Include' ["userId","clientId", "trips"] Bill, priceIncludingTax :: Int, priceExcludingTax :: Float, taxAmount :: Float }
+data RenderBillView = RenderBillView { bill :: Include' ["userId","clientId", "trips"] Bill, priceInfo :: PriceInfo }
 
 instance View RenderBillView where
     beforeRender view = do
@@ -30,20 +31,7 @@ instance View RenderBillView where
         <div class="table-responsive">
             <table class="table">
                 <tbody>{forEach (get #trips bill) renderTrip}</tbody>
-                <tfoot>
-                    <tr>
-                        <th class="text-right pr-3">Total HT</th>
-                        <th class="text-lift">{renderDecimalPrice priceExcludingTax}€</th>
-                    </tr>
-                    <tr>
-                      <th class="text-right pr-3">TVA (10%)</th>
-                      <th class="text-left">{renderDecimalPrice taxAmount}€</th>
-                    </tr>
-                    <tr style="font-size:2em">
-                        <th class="text-right pr-3">Total TTC</th>
-                        <th class="text-left">{renderPrice priceIncludingTax}€</th>
-                    </tr>
-                </tfoot>
+                {renderPriceInfo priceInfo}
             </table> 
         </div>
         |]

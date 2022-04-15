@@ -17,9 +17,7 @@ instance Controller BillsController where
         ensureIsUser
         bill <- fetchBillInfo billId
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
-        let priceIncludingTax = computePriceIncludingTax bill
-        let priceExcludingTax = excludeTax priceIncludingTax
-        let taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
+        let priceInfo = billPriceInfo bill
         render RenderBillView { .. }
 
     action SendBillSuccessAction { billId } = do
@@ -34,18 +32,14 @@ instance Controller BillsController where
         ensureIsUser
         bill <- fetchBillInfo billId
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
-        let priceIncludingTax = computePriceIncludingTax bill
-        let priceExcludingTax = excludeTax priceIncludingTax
-        let taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
+        let priceInfo = billPriceInfo bill
         renderPDFResponse RenderBillView { .. }
 
     action SendBillAction { billId } = do
         ensureIsUser
         bill <- fetchBillInfo billId
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
-        let priceIncludingTax = computePriceIncludingTax bill
-        let priceExcludingTax = excludeTax priceIncludingTax
-        let taxAmount = fromIntegral priceIncludingTax - priceExcludingTax
+        let priceInfo = billPriceInfo bill
         case get #sentAt bill of
             Nothing -> do
                 pdf <- renderPDF RenderBillView { .. }
