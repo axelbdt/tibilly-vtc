@@ -80,6 +80,7 @@ instance Controller BillsController where
     action CheckBeforeSendBillAction { billId } = do
         ensureIsUser
         bill <- fetch billId
+            >>= fetchRelated #clientId
         accessDeniedUnless (get #userId bill == currentUserId)
         tripCount <- query @Trip
             |> filterWhere (#billId, billId)

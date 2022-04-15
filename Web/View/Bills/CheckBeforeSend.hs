@@ -1,25 +1,25 @@
 module Web.View.Bills.CheckBeforeSend where
 import Web.View.Prelude
 
-data CheckBeforeSendView = CheckBeforeSendView { bill :: Bill }
+data CheckBeforeSendView = CheckBeforeSendView { bill :: Include "clientId" Bill }
 
 instance View CheckBeforeSendView where
     html CheckBeforeSendView { .. } = [hsx|
-        {breadcrumb}
-        <div class="d-flex justify-content-between">
-        <h1>Check your bill</h1>
-        <div class="ml-auto align-self-center">{sendButton}</div>
-        </div>
+        <h1>Vérifiez votre facture</h1>
+        <p>Vérifiez votre facture avant envoi.</p>
+        <p>Destinataire : {clientInfo}</p>
         <div class="w-100" style="height:40em">
           <iframe class="w-100 h-100" src={pathTo (GenerateBillPDFAction (get #id bill))} title="Bill" allowfullscreen></iframe>
         </div>
+        <div class="d-flex justify-content-between mt-3">
+        <a href={pathTo (ShowBillAction (get #id bill))} class="btn btn-outline-primary">Retour</a>
+        {sendButton}
+        </div>
+        
         |]
             where
-                breadcrumb = renderBreadcrumb
-                                [ breadcrumbLink "Bills" BillsAction
-                                , breadcrumbLink "Show Bill" (ShowBillAction (get #id bill))
-                                , breadcrumbText "Check Bill"
-                                ]
                 sendButton = [hsx|
                     <a href={pathTo (SendBillAction (get #id bill))} class="btn btn-primary">Send</a>
                 |]
+                client = get #clientId bill
+                clientInfo = [hsx| {renderClientFullName client} ({get #email client}) |]
