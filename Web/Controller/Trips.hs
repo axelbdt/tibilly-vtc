@@ -50,7 +50,7 @@ instance Controller TripsController where
                 Left trip -> render NewView { .. } 
                 Right trip -> do
                     trip <- trip |> createRecord
-                    setSuccessMessage "Trip created"
+                    setSuccessMessage "Course ajoutée"
                     redirectTo (ShowBillAction (get #billId trip))
 
     action CreateTripAndBillAction { clientId } = do
@@ -72,13 +72,13 @@ instance Controller TripsController where
                             Right trip -> do
                                 bill <- bill |> createRecord
                                 trip <- trip |> set #billId (get #id bill) |> createRecord
-                                setSuccessMessage "Bill created"
+                                setSuccessMessage "Facture créée"
                                 redirectTo (ShowBillAction (get #id bill))
 
     action DeleteTripAction { tripId } = do
         trip <- fetch tripId
         deleteRecord trip
-        setSuccessMessage "Trip deleted"
+        setSuccessMessage "Course supprimée"
         redirectTo (ShowBillAction (get #billId trip))
 
 buildTrip trip = trip
@@ -88,7 +88,7 @@ buildTrip trip = trip
     |> validateField #destination nonEmpty
 
 isGreaterOrEqualThan min value | value >= min = Success
-isGreaterOrEqualThan min value = Failure "Cannot be negative"
+isGreaterOrEqualThan min value = Failure "Doit être supérieur à 0"
 
 validateBillBelongsToUser userId billId = do
     bill <- fetch billId
@@ -96,4 +96,4 @@ validateBillBelongsToUser userId billId = do
         if currentUserId == get #userId bill then
             Success
         else
-            Failure "The bill you are trying to add a trip to does not belong to you."
+            Failure "La facture à laquelle vous tentez d'ajouter une course ne vous appartient pas."
