@@ -5,25 +5,18 @@ data SelectClientView = SelectClientView { bill :: Bill, userClients :: [Client]
 
 instance View SelectClientView where
     html SelectClientView { .. } = [hsx|
-        {breadcrumb}
-        <h1>New Bill</h1>
+        <h1>Nouvelle Facture</h1>
         {renderForm bill userClients}
     |]
-        where
-            breadcrumb = renderBreadcrumb
-                [ breadcrumbLink "Bills" BillsAction
-                , breadcrumbText "New Bill"
-                , breadcrumbText "Select Client"
-                ]
 
 renderForm :: Bill -> [Client] -> Html
 renderForm bill userClients = formFor' bill (pathTo NewBillSelectClientAction) [hsx|
     {(hiddenField #userId)}
     <div class="d-flex flex-row justify-content-between">
-      <div class="flex-fill pr-2">{(selectField #clientId userClients)}</div>
-      <div class="pb-3" style="padding-top:2em"><a class="btn btn-secondary" href={NewClientAction}>Create New Client</a></div>
+        <div class="flex-fill pr-2">{(selectField #clientId userClients) { placeholder = "Sélectionner un client"}}</div>
+        <div class="pb-3" style="padding-top:2em"><a class="btn btn-secondary" href={NewClientAction}>Nouveau Client</a></div>
     </div>
-    {submitButton}
+    {submitButton { label = "Valider" }}
 |]
 
 instance CanSelect Client where

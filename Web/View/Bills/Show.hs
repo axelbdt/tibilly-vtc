@@ -18,15 +18,8 @@ instance View ShowView where
             </table>
         </div>
         <div class="d-flex justify-content-between">
-            <div>
-                <a href={pathTo BillsAction} class="btn btn-outline-primary">Retour</a>
-            </div>
-            <div>
                 <a href={pathTo (DeleteBillAction (get #id bill))} class="btn btn-danger js-delete">Supprimer</a>
-            </div>
-            <div>
                 <a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Envoyer</a>
-            </div>
         </div>
 
     |]

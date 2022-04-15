@@ -128,7 +128,7 @@ billPriceInfo bill = PriceInfo {
 
 validateClientBelongsToUser userId clientId = do
     if clientId == "00000000-0000-0000-0000-000000000000" then
-        return (Failure "Sélectionnez un client")
+        return (Failure "Veuillez sélectionnez un client")
     else do
       client <- fetch clientId
       return
