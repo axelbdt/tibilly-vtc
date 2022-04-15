@@ -85,7 +85,7 @@ instance Controller BillsController where
             |> filterWhere (#billId, billId)
             |> fetchCount
         if tripCount == 0 then do
-            setErrorMessage "Ajoutez une course à la facture"
+            setErrorMessage "Ajoutez d'abord une course à la facture"
             redirectTo (ShowBillAction billId)
         else do
             render CheckBeforeSendView { .. }
