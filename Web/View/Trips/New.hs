@@ -7,16 +7,9 @@ data NewView = NewView { trip :: Trip }
 
 instance View NewView where
     html NewView { .. } = [hsx|
-        {breadcrumb}
-        <h1>Add Trip</h1>
+        <h1>Ajouter une course</h1>
         {renderForm trip}
     |]
-        where
-            breadcrumb = renderBreadcrumb
-                [ breadcrumbLink "Bills" BillsAction
-                , breadcrumbLink "Show Bill" (ShowBillAction (get #billId trip))
-                , breadcrumbText "New Trip"
-                ]
 
 renderForm :: Trip -> Html
-renderForm trip = formFor trip (tripForm trip)
+renderForm trip = formFor trip (tripForm trip "Valider")

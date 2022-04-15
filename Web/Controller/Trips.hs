@@ -38,8 +38,8 @@ instance Controller TripsController where
                 Left trip -> render EditView { .. }
                 Right trip -> do
                     trip <- trip |> updateRecord
-                    setSuccessMessage "Trip updated"
-                    redirectTo EditTripAction { .. }
+                    setSuccessMessage "Course modifiée"
+                    redirectTo (ShowBillAction (get #billId trip))
 
     action CreateTripAction = do
         let trip = newRecord @Trip

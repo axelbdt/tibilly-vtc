@@ -7,15 +7,9 @@ data EditView = EditView { trip :: Trip }
 
 instance View EditView where
     html EditView { .. } = [hsx|
-        {breadcrumb}
-        <h1>Edit Trip</h1>
+        <h1>Modifier la course</h1>
         {renderForm trip}
     |]
-        where
-            breadcrumb = renderBreadcrumb
-                [ breadcrumbLink "Bills" BillsAction
-                , breadcrumbText "Edit Trip"
-                ]
 
 renderForm :: Trip -> Html
-renderForm trip = formFor trip (tripForm trip)
+renderForm trip = formFor trip (tripForm trip "Valider")

@@ -6,20 +6,20 @@ renderTripDescription trip = "De " ++ get #start trip ++ " à " ++ get #destinat
 renderTrip :: Trip -> Html
 renderTrip trip = [hsx|
     <tr>
-        <td>{get #start trip}</td>
+        <td>{(get #start trip) }</td>
         <td>{get #destination trip}</td>
         <td>{renderPrice (get #price trip)}€</td>
-        <td><a href={EditTripAction (get #id trip)} class="text-muted">Edit</a></td>
-        <td><a href={DeleteTripAction (get #id trip)} class="js-delete text-muted">Delete</a></td>
+        <td><a href={EditTripAction (get #id trip)} class="text-muted">Modifier</a></td>
+        <td><a href={DeleteTripAction (get #id trip)} class="js-delete text-muted">Supprimer</a></td>
     </tr>
 |]
 
-tripForm trip = [hsx|
-    {(textField #start)}
+tripForm trip submitLabel = [hsx|
+    {(textField #start) { fieldLabel = "Départ" } }
     {(textField #destination)}
     {(dateField #date)}
-    {(numberField #price) {fieldLabel = "Price (€)", additionalAttributes = [("min","0")]}}
+    {(numberField #price) {fieldLabel = "Prix TTC (€)", additionalAttributes = [("min","0")]}}
     {(hiddenField #billId)}
-    {submitButton}
+    {submitButton { label = submitLabel }}
 
 |]
