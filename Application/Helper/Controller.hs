@@ -16,3 +16,6 @@ renderPDFResponse view = do
     respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes
 
 frenchNonEmpty value = (nonEmpty |> withCustomErrorMessage "Veuillez remplir ce champ") value
+
+getCurrentDay :: IO Day
+getCurrentDay = fmap utctDay getCurrentTime

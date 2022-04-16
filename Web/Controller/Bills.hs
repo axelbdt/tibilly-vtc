@@ -1,5 +1,6 @@
 module Web.Controller.Bills where
 
+import qualified Data.Text as T
 import Data.Time.Clock
 import Data.Time.Calendar
 import Web.Controller.Prelude
@@ -12,6 +13,8 @@ import Web.View.Bills.RenderBill
 
 import Web.Mail.Bills.SendBillToClient
 
+generateBillNumber currentTime = T.pack $ formatTime defaultTimeLocale "%Y%m%d" currentTime
+
 instance Controller BillsController where
     action BillRenderPreviewAction { billId }= do
         ensureIsUser
@@ -23,16 +26,22 @@ instance Controller BillsController where
     action SendBillSuccessAction { billId } = do
         bill <- fetch billId
         currentTime <- getCurrentTime
+        let billNumber = generateBillNumber currentTime
         bill
             |> set #sentAt (Just currentTime)
+            |> set #number billNumber
             |> updateRecord
         redirectTo BillsAction
 
+    -- TODO: Refacto when I have learned about Monads
     action GenerateBillPDFAction { billId } = do
         ensureIsUser
-        bill <- fetchBillInfo billId
-        accessDeniedUnless (currentUserId == get #id (get #userId bill))
-        let priceInfo = billPriceInfo bill
+        fbill <- fetchBillInfo billId
+        accessDeniedUnless (currentUserId == get #id (get #userId fbill))
+        let priceInfo = billPriceInfo fbill
+        currentTime <- getCurrentTime
+        let billNumber = generateBillNumber currentTime
+        let bill = fbill |> set #sentAt (Just currentTime) |> set #number billNumber
         renderPDFResponse RenderBillView { .. }
 
     action SendBillAction { billId } = do
@@ -115,8 +124,10 @@ instance Controller BillsController where
 
 buildBill bill = bill
     |> fill @["userId","clientId"]
+    |> set #number ""
     |> set #userId currentUserId
     |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
+
 
 fetchBillInfo billId = do
     fetch billId
