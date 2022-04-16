@@ -59,5 +59,5 @@ buildClient client = client
     |> fill @["email","firstName","lastName","userId"]
     |> set #userId currentUserId
     |> validateField #email isEmail
-    |> validateField #firstName nonEmpty
-    |> validateField #lastName nonEmpty
+    |> validateField #firstName frenchNonEmpty
+    |> validateField #lastName frenchNonEmpty

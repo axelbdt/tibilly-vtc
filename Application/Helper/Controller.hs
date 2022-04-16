@@ -14,3 +14,5 @@ renderPDF view = do
 renderPDFResponse view = do
     pdfBytes <- renderPDF view
     respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes
+
+frenchNonEmpty value = (nonEmpty |> withCustomErrorMessage "Veuillez remplir ce champ") value

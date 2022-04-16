@@ -84,8 +84,8 @@ instance Controller TripsController where
 buildTrip trip = trip
     |> fill @["start","destination","date","billId", "price"]
     |> validateField #price (isGreaterOrEqualThan 0)
-    |> validateField #start nonEmpty
-    |> validateField #destination nonEmpty
+    |> validateField #start frenchNonEmpty
+    |> validateField #destination frenchNonEmpty
 
 isGreaterOrEqualThan min value | value >= min = Success
 isGreaterOrEqualThan min value = Failure "Doit être supérieur à 0"
@@ -97,3 +97,4 @@ validateBillBelongsToUser userId billId = do
             Success
         else
             Failure "La facture à laquelle vous tentez d'ajouter une course ne vous appartient pas."
+

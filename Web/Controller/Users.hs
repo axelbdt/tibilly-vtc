@@ -53,9 +53,9 @@ instance Controller UsersController where
 buildUser user = user
     |> fill @["email","firstName","lastName","passwordHash","failedLoginAttempts"]
     |> validateField #email isEmail
-    |> validateField #firstName nonEmpty
-    |> validateField #lastName nonEmpty
-    |> validateField #passwordHash nonEmpty
+    |> validateField #firstName frenchNonEmpty
+    |> validateField #lastName frenchNonEmpty
+    |> validateField #passwordHash frenchNonEmpty
     |> validateField #passwordHash (hasMinLength 8)
     |> validateField #passwordHash (passwordMatch (param "passwordConfirm"))
 
