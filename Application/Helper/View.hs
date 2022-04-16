@@ -23,7 +23,9 @@ renderUTCTime = T.pack . formatTime defaultTimeLocale "%F"
 renderDay :: Day -> Text
 renderDay = T.pack . formatTime defaultTimeLocale "%d/%m/%Y"
 
-renderBillName bill = getClientFullName (get #clientId bill) ++ " " ++ renderUTCTime (get #createdAt bill)
+renderBillName bill = case get #sentAt bill of
+    Nothing -> "Brouillon du " ++ (renderDay . utctDay $ get #createdAt bill)
+    Just sentAt -> renderUTCTime sentAt
 
 formFrame inner = [hsx|
     <div class="w-75 mx-auto border p-5 shadow rounded">
