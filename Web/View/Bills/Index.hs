@@ -12,16 +12,12 @@ instance View IndexView where
             </table>
         </div>
     |]
-        where
-            breadcrumb = renderBreadcrumb
-                [ breadcrumbLink "Bills" BillsAction
-                ]
 
 renderBill :: Include "clientId" Bill -> Html
 renderBill bill = [hsx|
     <tr>
         <td><a href={ShowBillAction (get #id bill)}>{renderBillName bill}</a></td>
-        <td><a href={DeleteBillAction (get #id bill)} class="js-delete text-muted">Supprimer</a></td>
+        <td><a href={DeleteBillAction (get #id bill)} class="js-delete text-muted" data-confirm="Êtes-vous sûr de vouloir supprimer cette facture ?">Supprimer</a></td>
     </tr>
 |]
     where client = get #clientId bill
