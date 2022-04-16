@@ -13,7 +13,7 @@ CREATE TABLE bills (
     user_id UUID NOT NULL,
     client_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    sent_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    sent_on DATE,
     number TEXT DEFAULT '' NOT NULL
 );
 CREATE TABLE trips (

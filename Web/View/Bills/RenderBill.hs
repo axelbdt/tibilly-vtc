@@ -15,7 +15,7 @@ instance View RenderBillView where
             Facture<br/>
             Transport de personnes
         </h1>
-        <p>Facture no. {get #number bill}, expédiée le : {renderMaybeUTCTime (get #sentAt bill)}, échéance immédiate.</p>
+        <p>Facture no. {get #number bill}, expédiée le : {sentOn}, échéance immédiate.</p>
         <div class="d-flex justify-content-between">
             <div>
                 <h2>Client</h2>
@@ -39,6 +39,7 @@ instance View RenderBillView where
         where
             client = get #clientId bill
             user = get #userId bill
+            sentOn = maybe "" renderDay (get #sentOn bill)
 
 
 renderTrip :: Trip -> Html

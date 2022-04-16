@@ -1,6 +1,7 @@
 module Web.Controller.Bills where
 
 import qualified Data.Text as T
+import Text.Printf
 import Data.Time.Clock
 import Data.Time.Calendar
 import Web.Controller.Prelude
@@ -13,21 +14,28 @@ import Web.View.Bills.RenderBill
 
 import Web.Mail.Bills.SendBillToClient
 
-setBillNumber bill = bill
-    |> set #number (case get #sentAt bill of
-        Nothing -> ""
-        Just sentAt -> T.pack $ formatTime defaultTimeLocale "%Y%m%d" sentAt
-    )
+setBillNumber bill = do
+    billsTodayCount :: Int <- query @Bill
+        |> filterWhere (#sentOn, get #sentOn bill)
+        |> filterWhere (#userId, get #id (get #userId bill))
+        |> fetchCount
+    let billNumberDateBlock = case get #sentOn bill of
+            Nothing -> ""
+            Just sentOn -> formatTime defaultTimeLocale "%Y%m%d" sentOn
+        billNumberCountBlock = printf "%02d" (billsTodayCount + 1)
+        billNumber = T.pack (billNumberDateBlock ++ "-" ++ billNumberCountBlock)
+    return (bill
+        |> set #number billNumber)
           
 
 instance Controller BillsController where
     action SendBillSuccessAction { billId } = do
-        bill <- fetch billId
-        currentTime <- getCurrentTime
-        bill
-            |> set #sentAt (Just currentTime)
-            |> setBillNumber
-            |> updateRecord
+        -- bill <- fetch billId
+        -- currentTime <- getCurrentTime
+        -- bill
+            -- --|> set #sentOn (Just currentTime)
+            -- -- |> setBillNumber
+            -- --|> updateRecord
         redirectTo BillsAction
 
     -- TODO: Refacto when I have learned about Monads
@@ -35,9 +43,11 @@ instance Controller BillsController where
         ensureIsUser
         currentTime <- getCurrentTime
         fbill <- fetchBillInfo billId
-        accessDeniedUnless (currentUserId == get #id (get #userId fbill))
-        let priceInfo = billPriceInfo fbill
-        let bill = fbill |> set #sentAt (Just currentTime) |> setBillNumber
+        let dbill = fbill
+                |> set #sentOn (Just (utctDay currentTime)) 
+        bill <- setBillNumber dbill
+        accessDeniedUnless (currentUserId == get #id (get #userId bill))
+        let priceInfo = billPriceInfo bill
         renderPDFResponse RenderBillView { .. }
 
     action SendBillAction { billId } = do
@@ -45,7 +55,7 @@ instance Controller BillsController where
         bill <- fetchBillInfo billId
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceInfo = billPriceInfo bill
-        case get #sentAt bill of
+        case get #sentOn bill of
             Nothing -> do
                 pdf <- renderPDF RenderBillView { .. }
                 setSuccessMessage "Facture envoyée"

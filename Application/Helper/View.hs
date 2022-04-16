@@ -17,18 +17,12 @@ renderPrice price = T.pack $ printf "%.2f" (fromIntegral price :: Float)
 renderDecimalPrice :: Float -> Text
 renderDecimalPrice = T.pack . printf "%.2f"
 
-renderUTCTime :: UTCTime -> Text
-renderUTCTime = T.pack . formatTime defaultTimeLocale "%F"
-
-renderMaybeUTCTime :: Maybe UTCTime -> Text
-renderMaybeUTCTime = maybe "" renderUTCTime
-
 renderDay :: Day -> Text
 renderDay = T.pack . formatTime defaultTimeLocale "%d/%m/%Y"
 
-renderBillName bill = case get #sentAt bill of
+renderBillName bill = case get #sentOn bill of
     Nothing -> "Brouillon du " ++ (renderDay . utctDay $ get #createdAt bill)
-    Just sentAt -> get #number bill
+    Just sentOn -> get #number bill
 
 formFrame inner = [hsx|
     <div class="w-75 mx-auto border p-5 shadow rounded">
