@@ -21,13 +21,6 @@ setBillNumber bill = bill
           
 
 instance Controller BillsController where
-    action BillRenderPreviewAction { billId }= do
-        ensureIsUser
-        bill <- fetchBillInfo billId
-        accessDeniedUnless (currentUserId == get #id (get #userId bill))
-        let priceInfo = billPriceInfo bill
-        render RenderBillView { .. }
-
     action SendBillSuccessAction { billId } = do
         bill <- fetch billId
         currentTime <- getCurrentTime
