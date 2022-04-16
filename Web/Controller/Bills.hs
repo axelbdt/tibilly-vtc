@@ -13,7 +13,12 @@ import Web.View.Bills.RenderBill
 
 import Web.Mail.Bills.SendBillToClient
 
-generateBillNumber currentTime = T.pack $ formatTime defaultTimeLocale "%Y%m%d" currentTime
+setBillNumber bill = bill
+    |> set #number (case get #sentAt bill of
+        Nothing -> ""
+        Just sentAt -> T.pack $ formatTime defaultTimeLocale "%Y%m%d" sentAt
+    )
+          
 
 instance Controller BillsController where
     action BillRenderPreviewAction { billId }= do
@@ -26,10 +31,9 @@ instance Controller BillsController where
     action SendBillSuccessAction { billId } = do
         bill <- fetch billId
         currentTime <- getCurrentTime
-        let billNumber = generateBillNumber currentTime
         bill
             |> set #sentAt (Just currentTime)
-            |> set #number billNumber
+            |> setBillNumber
             |> updateRecord
         redirectTo BillsAction
 
@@ -40,8 +44,7 @@ instance Controller BillsController where
         accessDeniedUnless (currentUserId == get #id (get #userId fbill))
         let priceInfo = billPriceInfo fbill
         currentTime <- getCurrentTime
-        let billNumber = generateBillNumber currentTime
-        let bill = fbill |> set #sentAt (Just currentTime) |> set #number billNumber
+        let bill = fbill |> set #sentAt (Just currentTime) |> setBillNumber
         renderPDFResponse RenderBillView { .. }
 
     action SendBillAction { billId } = do
