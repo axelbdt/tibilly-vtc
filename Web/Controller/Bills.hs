@@ -40,10 +40,10 @@ instance Controller BillsController where
     -- TODO: Refacto when I have learned about Monads
     action GenerateBillPDFAction { billId } = do
         ensureIsUser
+        currentTime <- getCurrentTime
         fbill <- fetchBillInfo billId
         accessDeniedUnless (currentUserId == get #id (get #userId fbill))
         let priceInfo = billPriceInfo fbill
-        currentTime <- getCurrentTime
         let bill = fbill |> set #sentAt (Just currentTime) |> setBillNumber
         renderPDFResponse RenderBillView { .. }
 
