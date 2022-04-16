@@ -22,4 +22,4 @@ instance View CheckBeforeSendView where
                     <a href={pathTo (SendBillAction (get #id bill))} class="btn btn-primary">Send</a>
                 |]
                 client = get #clientId bill
-                clientInfo = [hsx| {renderClientFullName client} ({get #email client}) |]
+                clientInfo = [hsx| {getClientFullName client} ({get #email client}) |]

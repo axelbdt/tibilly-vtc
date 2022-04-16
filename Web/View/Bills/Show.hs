@@ -8,7 +8,7 @@ data ShowView = ShowView { bill :: Include' ["clientId", "trips"] Bill, priceInf
 instance View ShowView where
     html ShowView { .. } = [hsx|
         <h1>Facture</h1>
-        <p>{get #clientId bill |> renderClientFullName}</p>
+        <p>{get #clientId bill |> getClientFullName}</p>
 
         <h2>Courses<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-secondary ml-4">+ Ajouter</a></h2>
         <div class="table-responsive">
