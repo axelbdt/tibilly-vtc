@@ -10,10 +10,10 @@ instance View ShowView where
         <h1>Facture</h1>
         <p>{get #clientId bill |> getClientFullName}</p>
 
-        <h2>Courses<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-secondary ml-4">+ Ajouter</a></h2>
+        <h2>Courses{addButton}</h2>
         <div class="table-responsive">
             <table class="table">
-                <tbody>{forEach (get #trips bill) renderTrip}</tbody>
+                <tbody>{forEach (get #trips bill) (renderTrip billNotSent)}</tbody>
                 {renderPriceInfo priceInfo}
             </table>
         </div>
@@ -23,6 +23,10 @@ instance View ShowView where
         </div>
     |]
         where
+            billNotSent = isNothing (get #sentOn bill)
             sendButton = case get #sentOn bill of
                 Nothing -> [hsx|<a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Envoyer</a>|]
                 Just sentOn -> [hsx|Envoyée le {renderDay sentOn}|]
+            addButton = case get #sentOn bill of
+                Nothing -> [hsx|<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-secondary ml-4">+ Ajouter</a>|]
+                Just _ -> [hsx||]
