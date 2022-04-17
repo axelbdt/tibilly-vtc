@@ -19,3 +19,5 @@ frenchNonEmpty value = (nonEmpty |> withCustomErrorMessage "Veuillez remplir ce 
 
 getCurrentDay :: IO Day
 getCurrentDay = fmap utctDay getCurrentTime
+
+isSent bill = isJust (get #sentOn bill)

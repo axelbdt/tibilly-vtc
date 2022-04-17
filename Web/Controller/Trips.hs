@@ -13,12 +13,14 @@ import Web.Controller.Bills (buildBill)
 
 instance Controller TripsController where
     action NewTripFromClientAction { clientId } = do
+        ensureIsUser
         currentTime <- getCurrentTime
         let trip = newRecord
               |> set #date (utctDay currentTime)
         render NewFromClientView { .. }
 
     action NewTripAction { billId } = do
+        ensureIsUser
         currentTime <- getCurrentTime
         let trip = newRecord
               |> set #billId billId
@@ -37,9 +39,14 @@ instance Controller TripsController where
             >>= ifValid \case
                 Left trip -> render EditView { .. }
                 Right trip -> do
-                    trip <- trip |> updateRecord
-                    setSuccessMessage "Course modifiée"
-                    redirectTo (ShowBillAction (get #billId trip))
+                    bill <- fetch (get #billId trip)
+                    if isSent bill then do
+                        setErrorMessage "Impossible de modifier une facture déjà envoyée"
+                        redirectTo (ShowBillAction (get #billId trip))
+                    else do
+                        trip <- trip |> updateRecord
+                        setSuccessMessage "Course modifiée"
+                        redirectTo (ShowBillAction (get #billId trip))
 
     action CreateTripAction = do
         let trip = newRecord @Trip
@@ -49,9 +56,14 @@ instance Controller TripsController where
             >>= ifValid \case
                 Left trip -> render NewView { .. } 
                 Right trip -> do
-                    trip <- trip |> createRecord
-                    setSuccessMessage "Course ajoutée"
-                    redirectTo (ShowBillAction (get #billId trip))
+                    bill <- fetch (get #billId trip)
+                    if isSent bill then do
+                        setErrorMessage "Impossible de modifier une facture déjà envoyée"
+                        redirectTo (ShowBillAction (get #billId trip))
+                    else do
+                        trip <- trip |> createRecord
+                        setSuccessMessage "Course ajoutée"
+                        redirectTo (ShowBillAction (get #billId trip))
 
     action CreateTripAndBillAction { clientId } = do
         ensureIsUser
