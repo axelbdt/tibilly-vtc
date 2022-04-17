@@ -46,7 +46,7 @@ instance Controller ClientsController where
                 Right client -> do
                     client <- client
                         |> createRecord
-                    setSuccessMessage "Client crée"
+                    setSuccessMessage "Client créé"
                     redirectTo (NewTripFromClientAction (get #id client))
 
     action DeleteClientAction { clientId } = do
