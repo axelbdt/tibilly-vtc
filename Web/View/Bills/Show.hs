@@ -19,7 +19,10 @@ instance View ShowView where
         </div>
         <div class="d-flex justify-content-between">
                 <a href={pathTo (DeleteBillAction (get #id bill))} class="btn btn-danger js-delete">Supprimer</a>
-                <a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Envoyer</a>
+                {sendButton}
         </div>
-
     |]
+        where
+            sendButton = case get #sentOn bill of
+                Nothing -> [hsx|<a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Envoyer</a>|]
+                Just sentOn -> [hsx|Envoyée le {renderDay sentOn}|]
