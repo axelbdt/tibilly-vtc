@@ -22,4 +22,4 @@ renderForm bill userClients = formFor' bill (pathTo NewBillSelectClientAction) [
 instance CanSelect Client where
     type SelectValue Client = Id Client
     selectValue client = get #id client
-    selectLabel client = get #firstName client ++ " " ++ get #lastName client
+    selectLabel client = getClientFullName client ++ " - " ++ get #email client
