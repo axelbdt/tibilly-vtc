@@ -6,7 +6,8 @@ CREATE TABLE users (
     locked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     failed_login_attempts INT DEFAULT 0 NOT NULL,
     first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL
+    last_name TEXT NOT NULL,
+    immatriculation TEXT NOT NULL
 );
 CREATE TABLE bills (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
