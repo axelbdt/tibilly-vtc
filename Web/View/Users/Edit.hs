@@ -6,7 +6,7 @@ data EditView = EditView { user :: User }
 
 instance View EditView where
     html EditView { .. } = [hsx|
-        <h1>Mon compte</h1>
+        <h1 class="text-center">Mon compte</h1>
         {renderForm user "Modifier"}
     |]
 
