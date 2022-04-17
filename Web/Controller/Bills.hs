@@ -53,25 +53,33 @@ instance Controller BillsController where
             >>= fetchRelated #clientId
             >>= fetchRelated #trips
         accessDeniedUnless (currentUserId == get #id (get #userId fbill))
-        let priceInfo = billPriceInfo fbill
-        case get #sentOn fbill of
-            Nothing -> do
-                let sentOn = Just (utctDay currentTime)
-                let dbill = fbill |> set #sentOn sentOn 
-                billNumber <- generateBillNumber dbill
-                let bill = dbill |> set #number billNumber
-                pdf <- renderPDF RenderBillView { .. }
-                sendMail SendBillToClientMail { .. }
-                ubill <- fetch billId
-                ubill
-                    |> set #number billNumber
-                    |> set #sentOn sentOn
-                    |> updateRecord
-                setSuccessMessage "Facture envoyée"
-                redirectTo BillsAction
-            Just _ -> do
-                setErrorMessage "Facture déjà envoyée"
-                redirectTo BillsAction
+        -- TODO: use fetchRelated #trips
+        tripCount <- query @Trip
+            |> filterWhere (#billId, billId)
+            |> fetchCount
+        if tripCount == 0 then do
+            setErrorMessage "Ajoutez d'abord une course à la facture"
+            redirectTo (ShowBillAction billId)
+        else do
+            let priceInfo = billPriceInfo fbill
+            case get #sentOn fbill of
+                Nothing -> do
+                    let sentOn = Just (utctDay currentTime)
+                    let dbill = fbill |> set #sentOn sentOn 
+                    billNumber <- generateBillNumber dbill
+                    let bill = dbill |> set #number billNumber
+                    pdf <- renderPDF RenderBillView { .. }
+                    sendMail SendBillToClientMail { .. }
+                    ubill <- fetch billId
+                    ubill
+                        |> set #number billNumber
+                        |> set #sentOn sentOn
+                        |> updateRecord
+                    setSuccessMessage "Facture envoyée"
+                    redirectTo BillsAction
+                Just _ -> do
+                    setErrorMessage "Facture déjà envoyée"
+                    redirectTo BillsAction
 
 
 
@@ -106,6 +114,7 @@ instance Controller BillsController where
         bill <- fetch billId
             >>= fetchRelated #clientId
         accessDeniedUnless (get #userId bill == currentUserId)
+        -- TODO: use fetchRelated #trips
         tripCount <- query @Trip
             |> filterWhere (#billId, billId)
             |> fetchCount
