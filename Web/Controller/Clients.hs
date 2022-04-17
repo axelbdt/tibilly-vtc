@@ -34,7 +34,7 @@ instance Controller ClientsController where
                 Right client -> do
                     client <- client |> updateRecord
                     setSuccessMessage "Client updated"
-                    redirectTo EditClientAction { .. }
+                    redirectTo ClientsAction
 
     action CreateClientAction = do
         ensureIsUser
@@ -47,7 +47,7 @@ instance Controller ClientsController where
                     client <- client
                         |> createRecord
                     setSuccessMessage "Client created"
-                    redirectTo ClientsAction
+                    redirectTo (NewTripFromClientAction (get #id client))
 
     action DeleteClientAction { clientId } = do
         client <- fetch clientId

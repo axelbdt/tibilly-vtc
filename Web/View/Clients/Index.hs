@@ -5,9 +5,7 @@ data IndexView = IndexView { clients :: [Client]  }
 
 instance View IndexView where
     html IndexView { .. } = [hsx|
-        {breadcrumb}
-
-        <h1>Index<a href={pathTo NewClientAction} class="btn btn-primary ml-4">+ New</a></h1>
+        <h1>Mes clients</h1>
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -22,16 +20,12 @@ instance View IndexView where
             
         </div>
     |]
-        where
-            breadcrumb = renderBreadcrumb
-                [ breadcrumbLink "Clients" ClientsAction
-                ]
 
 renderClient :: Client -> Html
 renderClient client = [hsx|
     <tr>
-        <td><a href={ShowClientAction (get #id client)}>{get #firstName client} {get #lastName client}</a></td>
-        <td><a href={EditClientAction (get #id client)} class="text-muted">Edit</a></td>
-        <td><a href={DeleteClientAction (get #id client)} class="js-delete text-muted">Delete</a></td>
+        <td><a href={EditClientAction (get #id client)}>{get #firstName client} {get #lastName client}</a></td>
+        <td><a href={EditClientAction (get #id client)} class="text-muted">Modifier</a></td>
+        <td><a href={DeleteClientAction (get #id client)} class="js-delete text-muted" data-confirm="Toutes les factures associées à ce client seront supprimées. Voulez-vous continuer ?">Supprimer</a></td>
     </tr>
 |]

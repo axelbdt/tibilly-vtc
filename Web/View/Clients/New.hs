@@ -1,5 +1,6 @@
 module Web.View.Clients.New where
 import Web.View.Prelude
+import Web.View.Clients.Render
 
 data NewView = NewView { client :: Client }
 
@@ -10,11 +11,4 @@ instance View NewView where
     |]
 
 renderForm :: Client -> Html
-renderForm client = formFor client [hsx|
-    {(textField #email){ fieldLabel = "Adresse e-mail" }}
-    {(textField #firstName) { fieldLabel = "Prénom" }}
-    {(textField #lastName) { fieldLabel = "Nom" }}
-    {(hiddenField #userId)}
-    {submitButton}
-
-|]
+renderForm client = formFor client (clientForm client)
