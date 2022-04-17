@@ -28,22 +28,16 @@ generateBillNumber bill = do
           
 
 instance Controller BillsController where
-    action SendBillSuccessAction { billId } = do
-        -- fbill <- fetchBillInfo billId
-        -- currentTime <- getCurrentTime
-        -- billNumber <- generateBillNumber fbill
-        -- let bill = fbill
-        --         |> set #number billNumber
-        --         |> updateRecord
-        redirectTo BillsAction
-
     -- TODO: Refacto when I have learned about Monads
     action GenerateBillPDFAction { billId } = do
         ensureIsUser
         currentTime <- getCurrentTime
-        fbill <- fetchBillInfo billId
-        let dbill = fbill
-                |> set #sentOn (Just (utctDay currentTime)) 
+        fbill <- fetch billId
+            >>= fetchRelated #userId
+            >>= fetchRelated #clientId
+            >>= fetchRelated #trips
+        let sentOn = Just (utctDay currentTime)
+        let dbill = fbill |> set #sentOn sentOn
         billNumber <- generateBillNumber dbill
         let bill = dbill |> set #number billNumber
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
@@ -54,19 +48,27 @@ instance Controller BillsController where
     action SendBillAction { billId } = do
         ensureIsUser
         currentTime <- getCurrentTime
-        fbill <- fetchBillInfo billId
+        fbill <- fetch billId
+            >>= fetchRelated #userId
+            >>= fetchRelated #clientId
+            >>= fetchRelated #trips
         accessDeniedUnless (currentUserId == get #id (get #userId fbill))
         let priceInfo = billPriceInfo fbill
         case get #sentOn fbill of
             Nothing -> do
-                let dbill = fbill |> set #sentOn (Just (utctDay currentTime)) 
+                let sentOn = Just (utctDay currentTime)
+                let dbill = fbill |> set #sentOn sentOn 
                 billNumber <- generateBillNumber dbill
                 let bill = dbill |> set #number billNumber
                 pdf <- renderPDF RenderBillView { .. }
                 sendMail SendBillToClientMail { .. }
+                ubill <- fetch billId
+                ubill
+                    |> set #number billNumber
+                    |> set #sentOn sentOn
+                    |> updateRecord
                 setSuccessMessage "Facture envoyée"
-                redirectTo (SendBillSuccessAction billId)
-                -- redirectTo (SendBillSuccessAction billId)
+                redirectTo BillsAction
             Just _ -> do
                 setErrorMessage "Facture déjà envoyée"
                 redirectTo BillsAction
@@ -140,13 +142,6 @@ buildBill bill = bill
     |> set #number ""
     |> set #userId currentUserId
     |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
-
-
-fetchBillInfo billId = do
-    fetch billId
-        >>= fetchRelated #userId
-        >>= fetchRelated #clientId
-        >>= fetchRelated #trips
 
 
 billPriceInfo bill = PriceInfo {
