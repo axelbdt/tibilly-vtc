@@ -29,11 +29,11 @@ instance Controller UsersController where
                     redirectTo NewSessionAction
 
     action CreateUserAction = do
-    -- {-
+    {-
         setErrorMessage "Inscription momentanément désactivée, désolé!"
         redirectTo NewSessionAction
-    -- -}
-    {-
+    -}
+    -- {-
         let user = newRecord @User
         user
             |> buildUser
@@ -46,7 +46,7 @@ instance Controller UsersController where
                         |> createRecord
                     setSuccessMessage "Votre compte a été créé"
                     redirectTo NewSessionAction
-    -}
+    -- -}
 
 
 -- TODO: translate error messages
