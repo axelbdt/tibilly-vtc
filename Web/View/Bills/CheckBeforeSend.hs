@@ -11,15 +11,16 @@ instance View CheckBeforeSendView where
         <div class="w-100" style="height:40em">
           <iframe class="w-100 h-100" src={pathTo (GenerateBillPDFAction (get #id bill))} title="Bill" allowfullscreen></iframe>
         </div>
-        <div class="d-flex justify-content-between mt-3">
-        <a href={pathTo (ShowBillAction (get #id bill))} class="btn btn-outline-primary">Retour</a>
-        {sendButton}
-        </div>
-        
+        {renderForm bill} 
         |]
             where
-                sendButton = [hsx|
-                    <a href={pathTo (SendBillAction (get #id bill))} class="btn btn-primary">Send</a>
-                |]
                 client = get #clientId bill
                 clientInfo = [hsx| {getClientFullName client} ({get #email client}) |]
+
+renderForm bill = formFor' bill (pathTo (SendBillAction (get #id bill))) [hsx|
+        <div class="d-flex justify-content-between mt-3">
+            <a href={pathTo (ShowBillAction (get #id bill))} class="btn btn-outline-primary">Retour</a>
+            {submitButton}
+        </div>
+
+|]
