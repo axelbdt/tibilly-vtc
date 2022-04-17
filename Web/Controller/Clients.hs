@@ -33,7 +33,7 @@ instance Controller ClientsController where
                 Left client -> render EditView { .. }
                 Right client -> do
                     client <- client |> updateRecord
-                    setSuccessMessage "Client updated"
+                    setSuccessMessage "Client modifié"
                     redirectTo ClientsAction
 
     action CreateClientAction = do
@@ -46,13 +46,13 @@ instance Controller ClientsController where
                 Right client -> do
                     client <- client
                         |> createRecord
-                    setSuccessMessage "Client created"
+                    setSuccessMessage "Client crée"
                     redirectTo (NewTripFromClientAction (get #id client))
 
     action DeleteClientAction { clientId } = do
         client <- fetch clientId
         deleteRecord client
-        setSuccessMessage "Client deleted"
+        setSuccessMessage "Client supprimé"
         redirectTo ClientsAction
 
 buildClient client = client

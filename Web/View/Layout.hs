@@ -33,7 +33,8 @@ navbar :: Html
 navbar = [hsx|
 <nav class="navbar navbar-light bg-light navbar-expand-lg">
     <a class="navbar-brand" href="/">Tibilly</a>
-    <a class="navbar-nav" href={pathTo BillsAction}>Factures</a>
+    <a class="navbar-nav mr-3" href={pathTo BillsAction}>Factures</a>
+    <a class="navbar-nav mr-3" href={pathTo ClientsAction}>Clients</a>
     {loginButton}
 </nav>
 |]
