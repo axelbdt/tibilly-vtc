@@ -1,7 +1,7 @@
 module Web.View.Users.Render where
 import Web.View.Prelude
 
-renderForm user buttonLabel = formFor user [hsx|
+userForm user buttonLabel = formFor user [hsx|
     {(textField #email) { fieldLabel = "Adresse e-mail" }}
     {(textField #firstName) { fieldLabel = "Prénom" }}
     {(textField #lastName) { fieldLabel = "Nom" }}

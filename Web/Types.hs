@@ -26,7 +26,7 @@ data UsersController
     = NewUserAction
     | CreateUserAction
     | ShowCurrentUserAction
-    | UpdateUserAction { userId :: !(Id User) }
+    | UpdateCurrentUserAction
     deriving (Eq, Show, Data)
 
 data BillsController

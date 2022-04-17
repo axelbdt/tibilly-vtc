@@ -14,19 +14,29 @@ instance Controller UsersController where
                     |> fmap (set #passwordHash "")
         render EditView { .. }
 
-    action UpdateUserAction { userId } = do
-        user <- fetch userId
-        user
-            |> buildUser
-            |> ifValid \case
-                Left user -> render NewView { .. }
-                Right user -> do
-                    hashed <- hashPassword  (get #passwordHash user)
-                    user <- user
-                        |> set #passwordHash hashed
-                        |> createRecord
-                    setSuccessMessage ""
-                    redirectTo NewSessionAction
+    action UpdateCurrentUserAction = do
+        user <- fetch currentUserId
+        if param @Text "passwordHash" == "" then do
+            user
+                |> buildUpdatedUser
+                |> ifValid \case
+                    Left user -> render EditView { .. }
+                    Right user -> do
+                        user <- user
+                            |> updateRecord
+                        setSuccessMessage "Profil modifié"
+        else do
+            user
+                |> buildUser
+                |> ifValid \case
+                    Left user -> render EditView { .. }
+                    Right user -> do
+                        hashed <- hashPassword  (get #passwordHash user)
+                        user <- user
+                            |> set #passwordHash hashed
+                            |> updateRecord
+                        setSuccessMessage "Profil et mot de passe modifiés"
+        redirectTo ShowCurrentUserAction
 
     action CreateUserAction = do
     {-
@@ -55,6 +65,16 @@ buildUser user = user
     |> validateField #email isEmail
     |> validateField #firstName frenchNonEmpty
     |> validateField #lastName frenchNonEmpty
+    |> validatePasswordField
+
+buildUpdatedUser user = user
+    |> fill @["email","firstName","lastName","failedLoginAttempts"]
+    |> validateField #email isEmail
+    |> validateField #firstName frenchNonEmpty
+    |> validateField #lastName frenchNonEmpty
+
+validatePasswordField user = user
+
     |> validateField #passwordHash frenchNonEmpty
     |> validateField #passwordHash (hasMinLength 8)
     |> validateField #passwordHash (passwordMatch (param "passwordConfirm"))
