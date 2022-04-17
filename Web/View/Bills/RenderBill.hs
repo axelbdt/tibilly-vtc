@@ -2,6 +2,7 @@ module Web.View.Bills.RenderBill where
 import Web.View.Prelude
 import Web.View.Bills.Render
 import Web.View.Trips.Render (renderTripDescription)
+import qualified Data.Text as T
 
 
 data RenderBillView = RenderBillView { bill :: Include' ["userId","clientId", "trips"] Bill, priceInfo :: PriceInfo }
@@ -23,7 +24,8 @@ instance View RenderBillView where
             </div>
             <div>
                 <h2>Transporteur</h2>
-                <p>{getUserFullName user}</p>
+                <p>{getUserFullName user}<br/>
+                {renderImmatriculation user}</p>
             </div>
         </div>
         
@@ -40,6 +42,18 @@ instance View RenderBillView where
             client = get #clientId bill
             user = get #userId bill
             sentOn = maybe "" renderDay (get #sentOn bill)
+
+
+renderImmatriculation user =
+        immatriculationType ++ " " ++ immatriculation
+        where
+            immatriculation = get #immatriculation user
+            immatriculationType =
+                case T.length immatriculation of
+                    9 -> "SIREN"
+                    14 -> "SIRET"
+                    _ -> ""
+
 
 
 renderTrip :: Trip -> Html
