@@ -14,7 +14,7 @@ instance View ShowView where
         <div class="table-responsive">
             <table class="table">
                 <tbody>{forEach (get #trips bill) (renderTrip billNotSent)}</tbody>
-                {renderPriceInfo priceInfo}
+                {renderPriceInfoShow priceInfo}
             </table>
         </div>
         <div class="d-flex justify-content-between">
