@@ -69,7 +69,7 @@ instance Controller BillsController where
                     billNumber <- generateBillNumber dbill
                     let bill = dbill |> set #number billNumber
                     pdf <- renderPDF RenderBillView { .. }
-                    sendMail SendBillToClientMail { .. }
+                    -- sendMail SendBillToClientMail { .. }
                     ubill <- fetch billId
                     ubill
                         |> set #number billNumber
@@ -80,8 +80,6 @@ instance Controller BillsController where
                 Just _ -> do
                     setErrorMessage "Facture déjà envoyée"
                     redirectTo BillsAction
-
-
 
     action BillsAction = do
         ensureIsUser
