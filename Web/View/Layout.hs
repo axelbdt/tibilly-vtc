@@ -40,7 +40,7 @@ navbar = [hsx|
 |]
     where
         loginButton = case currentUserOrNothing of
-            Just user -> [hsx|<a class="ml-auto mr-3" href={ShowCurrentUserAction}>Mon compte</a><a class="btn btn-outline-primary mr-0 ml-0 js-delete js-delete-no-confirm" href={DeleteSessionAction}>Se déconnecter</a>|]
+            Just user -> [hsx|<a class="ml-auto mr-3" href={ShowCurrentUserAction}>Compte</a><a class="btn btn-outline-primary mr-0 ml-0 js-delete js-delete-no-confirm" href={DeleteSessionAction}>Déconnexion</a>|]
             Nothing -> [hsx|<a class="ml-auto mr-3" href={NewUserAction}>S'inscrire</a><a class="btn btn-primary mr-0 ml-0" href={NewSessionAction}>Se connecter</a>|]
 -- The 'assetPath' function used below appends a `?v=SOME_VERSION` to the static assets in production
 -- This is useful to avoid users having old CSS and JS files in their browser cache once a new version is deployed
