@@ -3,11 +3,13 @@ import Web.View.Prelude
 
 renderTripDescription trip = "De " ++ get #start trip ++ " à " ++ get #destination trip ++ ", le " ++  renderDay (get #date trip)
 
+
 renderTrip :: Bool -> Trip -> Html
 renderTrip withCommands trip = [hsx|
     <tr>
         <td>{(get #start trip) }</td>
         <td>{get #destination trip}</td>
+        <td>{renderDay (get #date trip)}</td>
         <td>{renderPrice (get #price trip)}€</td>
         {commands}
     </tr>
@@ -19,10 +21,10 @@ renderTrip withCommands trip = [hsx|
           else [hsx||]
 
 tripForm trip submitLabel = [hsx|
-    {(textField #start) { fieldLabel = "Départ" } }
-    {(textField #destination)}
-    {(numberField #price) {fieldLabel = "Prix TTC (€)", additionalAttributes = [("min","0")]}}
+    {(textField #start) { fieldLabel = "Départ" }}
+    {(textField #destination) { fieldLabel = "Arrivée" }}
     {(dateField #date)}
+    {(numberField #price) {fieldLabel = "Prix TTC (€)", additionalAttributes = [("min","0")]}}
     {(hiddenField #billId)}
     {submitButton { label = submitLabel }}
 

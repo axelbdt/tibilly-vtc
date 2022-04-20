@@ -13,6 +13,12 @@ instance View ShowView where
         <h2>Courses{addButton}</h2>
         <div class="table-responsive">
             <table class="table">
+                <thead>
+                    <th>Départ</th>
+                    <th>Arrivée</th>
+                    <th>Date</th>
+                    <th>Prix</th>
+                </thead>
                 <tbody>{forEach (get #trips bill) (renderTrip billNotSent)}</tbody>
                 {renderPriceInfoShow priceInfo}
             </table>
