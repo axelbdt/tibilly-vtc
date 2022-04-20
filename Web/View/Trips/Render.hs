@@ -21,8 +21,8 @@ renderTrip withCommands trip = [hsx|
 tripForm trip submitLabel = [hsx|
     {(textField #start) { fieldLabel = "Départ" } }
     {(textField #destination)}
-    {(dateField #date)}
     {(numberField #price) {fieldLabel = "Prix TTC (€)", additionalAttributes = [("min","0")]}}
+    {(dateField #date)}
     {(hiddenField #billId)}
     {submitButton { label = submitLabel }}
 
