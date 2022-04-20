@@ -5,8 +5,7 @@ CREATE TABLE users (
     password_hash TEXT NOT NULL,
     locked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     failed_login_attempts INT DEFAULT 0 NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
+    name TEXT NOT NULL,
     immatriculation TEXT NOT NULL
 );
 CREATE TABLE bills (

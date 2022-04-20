@@ -9,7 +9,7 @@ instance BuildMail SendBillToClientMail where
     to SendBillToClientMail { .. } = Address { addressName = Just (getClientFullName client), addressEmail = get #email client }
         where client = get #clientId bill
     cc SendBillToClientMail { .. } = [
-        Address { addressName = Just (getUserFullName user), addressEmail = get #email user }
+        Address { addressName = Just (get #name user), addressEmail = get #email user }
         ]
         where user = get #userId bill
     from = Address { addressName = Just "Tibilly Facturation", addressEmail = "factures@tibilly.fr" }

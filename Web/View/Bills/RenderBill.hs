@@ -24,7 +24,7 @@ instance View RenderBillView where
             </div>
             <div>
                 <h2>Transporteur</h2>
-                <p>{getUserFullName user}<br/>
+                <p>{get #name user}<br/>
                 {renderImmatriculation user}</p>
             </div>
         </div>

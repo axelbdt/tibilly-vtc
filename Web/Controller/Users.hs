@@ -64,18 +64,16 @@ instance Controller UsersController where
 
 -- TODO: translate error messages
 buildUser user = user
-    |> fill @["email","firstName","lastName","immatriculation","passwordHash","failedLoginAttempts"]
+    |> fill @["email","name","immatriculation","passwordHash","failedLoginAttempts"]
     |> validateField #email isEmail
-    |> validateField #firstName frenchNonEmpty
-    |> validateField #lastName frenchNonEmpty
+    |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
     |> validatePasswordField
 
 buildUpdatedUser user = user
-    |> fill @["email","firstName","lastName","immatriculation","failedLoginAttempts"]
+    |> fill @["email","name","immatriculation","failedLoginAttempts"]
     |> validateField #email isEmail
-    |> validateField #firstName frenchNonEmpty
-    |> validateField #lastName frenchNonEmpty
+    |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
 
 validateImmatriculationField user = user
