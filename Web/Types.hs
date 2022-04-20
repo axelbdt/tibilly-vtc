@@ -31,13 +31,13 @@ data UsersController
 
 data BillsController
     = BillsAction
-    | NewBillSelectClientPromptAction
+    | NewBillAction
     | ShowBillAction { billId :: !(Id Bill) }
     | CheckBeforeSendBillAction { billId :: !(Id Bill) }
-    | NewBillSelectClientAction
     | DeleteBillAction { billId :: !(Id Bill) }
     | GenerateBillPDFAction { billId :: !(Id Bill) }
     | SendBillAction { billId :: !(Id Bill) }
+    | CreateBillAction
     deriving (Eq, Show, Data)
 
 data ClientsController

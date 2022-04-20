@@ -6,19 +6,11 @@ import Data.Time.Calendar
 
 import Web.Controller.Prelude
 import Web.View.Trips.New
-import Web.View.Trips.NewFromClient
 import Web.View.Trips.Edit
 
 import Web.Controller.Bills (buildBill)
 
 instance Controller TripsController where
-    action NewTripFromClientAction { clientId } = do
-        ensureIsUser
-        currentTime <- getCurrentTime
-        let trip = newRecord
-              |> set #date (utctDay currentTime)
-        render NewFromClientView { .. }
-
     action NewTripAction { billId } = do
         ensureIsUser
         currentTime <- getCurrentTime
@@ -64,28 +56,6 @@ instance Controller TripsController where
                         trip <- trip |> createRecord
                         setSuccessMessage "Course ajoutée"
                         redirectTo (ShowBillAction (get #billId trip))
-
-    action CreateTripAndBillAction { clientId } = do
-        ensureIsUser
-        let bill = newRecord @Bill
-        let trip = newRecord @Trip |> buildTrip
-        bill
-            |> buildBill
-            >>= ifValid \case
-                Left bill ->
-                    render NewFromClientView { .. }
-                Right bill ->
-                    trip
-                        |> buildTrip
-                        |> set #billId (get #id bill)
-                        |> ifValid \case
-                            Left trip -> do
-                                render NewFromClientView { .. }
-                            Right trip -> do
-                                bill <- bill |> createRecord
-                                trip <- trip |> set #billId (get #id bill) |> createRecord
-                                setSuccessMessage "Facture créée"
-                                redirectTo (ShowBillAction (get #id bill))
 
     action DeleteTripAction { tripId } = do
         trip <- fetch tripId

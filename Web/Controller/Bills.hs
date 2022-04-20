@@ -6,7 +6,7 @@ import Data.Time.Clock
 import Data.Time.Calendar
 import Web.Controller.Prelude
 import Web.View.Bills.Index
-import Web.View.Bills.SelectClient
+import Web.View.Bills.New
 import Web.View.Bills.Show
 import Web.View.Bills.CheckBeforeSend
 
@@ -90,13 +90,13 @@ instance Controller BillsController where
             >>= collectionFetchRelated #clientId
         render IndexView { .. }
 
-    action NewBillSelectClientPromptAction = do
+    action NewBillAction = do
         ensureIsUser
         userClients <- query @Client
              |> filterWhere (#userId, currentUserId)
              |> fetch
         let bill = newRecord
-        render SelectClientView { .. }
+        render NewView { .. }
 
     action ShowBillAction { billId } = do
         ensureIsUser
@@ -122,7 +122,7 @@ instance Controller BillsController where
         else do
             render CheckBeforeSendView { .. }
 
-    action NewBillSelectClientAction = do
+    action CreateBillAction = do
         ensureIsUser
         let bill = newRecord @Bill
         bill
@@ -132,9 +132,11 @@ instance Controller BillsController where
                     userClients <- query @Client
                         |> filterWhere (#userId, currentUserId)
                         |> fetch
-                    render SelectClientView { .. } 
+                    render NewView { .. } 
                 Right bill -> do
-                    redirectTo (NewTripFromClientAction (get #clientId bill))
+                    bill <- bill |> createRecord
+                    setSuccessMessage "Facture créée, ajoutez une course."
+                    redirectTo (NewTripAction (get #id bill))
 
     action DeleteBillAction { billId } = do
         ensureIsUser
@@ -146,7 +148,6 @@ instance Controller BillsController where
 
 buildBill bill = bill
     |> fill @["userId","clientId"]
-    |> set #number ""
     |> set #userId currentUserId
     |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
 

@@ -1,16 +1,16 @@
-module Web.View.Bills.SelectClient where
+module Web.View.Bills.New where
 import Web.View.Prelude
 
-data SelectClientView = SelectClientView { bill :: Bill, userClients :: [Client] }
+data NewView = NewView { bill :: Bill, userClients :: [Client] }
 
-instance View SelectClientView where
-    html SelectClientView { .. } = [hsx|
+instance View NewView where
+    html NewView { .. } = [hsx|
         <h1>Nouvelle Facture</h1>
         {renderForm bill userClients}
     |]
 
 renderForm :: Bill -> [Client] -> Html
-renderForm bill userClients = formFor' bill (pathTo NewBillSelectClientAction) [hsx|
+renderForm bill userClients = formFor bill [hsx|
     {(hiddenField #userId)}
     <div class="d-flex flex-row justify-content-between">
         <div class="flex-fill pr-2">{(selectField #clientId userClients) { placeholder = "Sélectionner un client"}}</div>

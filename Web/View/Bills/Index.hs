@@ -5,7 +5,7 @@ data IndexView = IndexView { bills :: [Include "clientId" Bill]  }
 
 instance View IndexView where
     html IndexView { .. } = [hsx|
-        <h1>Mes factures<a href={pathTo NewBillSelectClientPromptAction} class="btn btn-primary ml-4">+ Nouvelle facture</a></h1>
+        <h1>Mes factures<a href={pathTo NewBillAction} class="btn btn-primary ml-4">+ Nouvelle facture</a></h1>
         <div class="table-responsive">
             <table class="table">
                 <tbody>{forEach bills renderBill}</tbody>
