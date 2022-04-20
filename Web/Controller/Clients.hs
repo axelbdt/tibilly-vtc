@@ -12,6 +12,7 @@ instance Controller ClientsController where
         ensureIsUser
         clients <- query @Client
             |> filterWhere (#userId, currentUserId)
+            |> orderBy #name
             |> fetch
         render IndexView { .. }
 
