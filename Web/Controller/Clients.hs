@@ -10,7 +10,9 @@ import Web.View.Clients.Show
 instance Controller ClientsController where
     action ClientsAction = do
         ensureIsUser
-        clients <- query @Client |> fetch
+        clients <- query @Client
+            |> filterWhere (#userId, currentUserId)
+            |> fetch
         render IndexView { .. }
 
     action NewClientAction = do
