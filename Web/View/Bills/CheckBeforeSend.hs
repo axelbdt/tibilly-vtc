@@ -15,7 +15,7 @@ instance View CheckBeforeSendView where
         |]
             where
                 client = get #clientId bill
-                clientInfo = [hsx| {getClientFullName client} ({get #email client}) |]
+                clientInfo = [hsx| {get #name client} ({get #email client}) |]
 
 renderForm bill = formFor' bill (pathTo (SendBillAction (get #id bill))) [hsx|
         <div class="d-flex justify-content-between mt-3">

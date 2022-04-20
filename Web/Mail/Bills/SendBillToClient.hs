@@ -6,13 +6,17 @@ data SendBillToClientMail = SendBillToClientMail { bill :: Include' ["userId","c
 
 instance BuildMail SendBillToClientMail where
     subject = "Your transport bill"
-    to SendBillToClientMail { .. } = Address { addressName = Just (getClientFullName client), addressEmail = get #email client }
+
+    to SendBillToClientMail { .. } = Address { addressName = Just (get #name client), addressEmail = get #email client }
         where client = get #clientId bill
+
     cc SendBillToClientMail { .. } = [
         Address { addressName = Just (get #name user), addressEmail = get #email user }
         ]
         where user = get #userId bill
+
     from = Address { addressName = Just "Tibilly Facturation", addressEmail = "factures@tibilly.fr" }
+
     html SendBillToClientMail { .. } = [hsx|
         Hello World
     |]

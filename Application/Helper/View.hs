@@ -6,9 +6,6 @@ import Text.Printf
 
 import IHP.ViewPrelude
 
--- Here you can add functions which are available in all your views
-getClientFullName client = get #firstName client ++ " " ++ get #lastName client
-
 renderPrice :: Int -> Text
 renderPrice price = T.pack $ printf "%.2f" (fromIntegral price :: Float)
 
@@ -21,9 +18,3 @@ renderDay = T.pack . formatTime defaultTimeLocale "%d/%m/%Y"
 renderBillName bill = case get #sentOn bill of
     Nothing -> "Brouillon du " ++ (renderDay . utctDay $ get #createdAt bill)
     Just sentOn -> get #number bill
-
-formFrame inner = [hsx|
-    <div class="w-75 mx-auto border p-5 shadow rounded">
-        {inner}
-    </div>
-|]

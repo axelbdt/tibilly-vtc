@@ -70,8 +70,7 @@ instance Controller ClientsController where
         redirectTo ClientsAction
 
 buildClient client = client
-    |> fill @["email","firstName","lastName","userId"]
+    |> fill @["email","name","userId"]
     |> set #userId currentUserId
     |> validateField #email isEmail
-    |> validateField #firstName frenchNonEmpty
-    |> validateField #lastName frenchNonEmpty
+    |> validateField #name frenchNonEmpty

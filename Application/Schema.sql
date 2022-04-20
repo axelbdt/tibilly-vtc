@@ -29,8 +29,7 @@ CREATE INDEX bills_user_id_index ON bills (user_id);
 CREATE TABLE clients (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     email TEXT NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
+    name TEXT NOT NULL,
     user_id UUID NOT NULL
 );
 CREATE INDEX clients_user_id_index ON clients (user_id);

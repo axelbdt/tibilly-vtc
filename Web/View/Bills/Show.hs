@@ -8,7 +8,7 @@ data ShowView = ShowView { bill :: Include' ["clientId", "trips"] Bill, priceInf
 instance View ShowView where
     html ShowView { .. } = [hsx|
         <h1>Facture</h1>
-        <p>{get #clientId bill |> getClientFullName}</p>
+        <p>{get #name client}</p>
 
         <h2>Courses{addButton}</h2>
         <div class="table-responsive">
@@ -23,6 +23,7 @@ instance View ShowView where
         </div>
     |]
         where
+            client = get #clientId bill
             billNotSent = isNothing (get #sentOn bill)
             sendButton = case get #sentOn bill of
                 Nothing -> [hsx|<a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Envoyer</a>|]
