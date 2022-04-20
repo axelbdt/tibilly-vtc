@@ -21,15 +21,21 @@ instance Controller ClientsController where
         render NewView { .. }
 
     action ShowClientAction { clientId } = do
+        ensureIsUser
         client <- fetch clientId
+        accessDeniedUnless (currentUserId == get #userId client)
         render ShowView { .. }
 
     action EditClientAction { clientId } = do
+        ensureIsUser
         client <- fetch clientId
+        accessDeniedUnless (currentUserId == get #userId client)
         render EditView { .. }
 
     action UpdateClientAction { clientId } = do
+        ensureIsUser
         client <- fetch clientId
+        accessDeniedUnless (currentUserId == get #userId client)
         client
             |> buildClient
             |> ifValid \case
@@ -66,7 +72,9 @@ instance Controller ClientsController where
                                 redirectTo (NewTripAction (get #id bill))
 
     action DeleteClientAction { clientId } = do
+        ensureIsUser
         client <- fetch clientId
+        accessDeniedUnless (currentUserId == get #userId client)
         deleteRecord client
         setSuccessMessage "Client supprimé"
         redirectTo ClientsAction
