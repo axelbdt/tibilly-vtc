@@ -14,20 +14,36 @@ import Web.View.Bills.RenderBill
 
 import Web.Mail.Bills.SendBillToClient
 
-generateBillNumber bill = do
-    billsTodayCount :: Int <- query @Bill
-        |> filterWhere (#sentOn, get #sentOn bill)
-        |> filterWhere (#userId, get #id (get #userId bill))
-        |> fetchCount
-    let billNumberDateBlock = case get #sentOn bill of
-            Nothing -> ""
-            Just sentOn -> formatTime defaultTimeLocale "%Y%m%d" sentOn
-        billNumberCountBlock = printf "%02d" (billsTodayCount + 1)
-        billNumber = T.pack (billNumberDateBlock ++ "-" ++ billNumberCountBlock)
-    return billNumber
-          
-
 instance Controller BillsController where
+    action BillsAction = do
+        ensureIsUser
+        bills <- query @Bill
+            |> filterWhere (#userId, currentUserId)
+            |> orderByDesc #createdAt
+            |> fetch
+            >>= collectionFetchRelated #clientId
+        render IndexView { .. }
+
+    action ShowBillAction { billId } = do
+        ensureIsUser
+        bill <- fetch billId
+            >>= fetchRelated #clientId
+            >>= pure . modify #trips (orderBy #date)
+            >>= fetchRelated #trips
+        accessDeniedUnless (get #userId bill == currentUserId)
+        let priceInfo = billPriceInfo bill
+        render ShowView { .. }
+
+
+    action NewBillAction = do
+        ensureIsUser
+        userClients <- query @Client
+             |> filterWhere (#userId, currentUserId)
+             |> orderBy #name
+             |> fetch
+        let bill = newRecord
+        render NewView { .. }
+
     -- TODO: Refacto when I have learned about Monads
     action GenerateBillPDFAction { billId } = do
         ensureIsUser
@@ -35,6 +51,7 @@ instance Controller BillsController where
         fbill <- fetch billId
             >>= fetchRelated #userId
             >>= fetchRelated #clientId
+            >>= pure . modify #trips (orderBy #date)
             >>= fetchRelated #trips
         let sentOn = Just (utctDay currentTime)
         let dbill = fbill |> set #sentOn sentOn
@@ -51,6 +68,7 @@ instance Controller BillsController where
         fbill <- fetch billId
             >>= fetchRelated #userId
             >>= fetchRelated #clientId
+            >>= pure . modify #trips (orderBy #date)
             >>= fetchRelated #trips
         accessDeniedUnless (currentUserId == get #id (get #userId fbill))
         -- TODO: use fetchRelated #trips
@@ -80,32 +98,6 @@ instance Controller BillsController where
                 Just _ -> do
                     setErrorMessage "Facture déjà envoyée"
                     redirectTo BillsAction
-
-    action BillsAction = do
-        ensureIsUser
-        bills <- query @Bill
-            |> filterWhere (#userId, currentUserId)
-            |> orderByDesc #createdAt
-            |> fetch
-            >>= collectionFetchRelated #clientId
-        render IndexView { .. }
-
-    action NewBillAction = do
-        ensureIsUser
-        userClients <- query @Client
-             |> filterWhere (#userId, currentUserId)
-             |> fetch
-        let bill = newRecord
-        render NewView { .. }
-
-    action ShowBillAction { billId } = do
-        ensureIsUser
-        bill <- fetch billId
-            >>= fetchRelated #clientId
-            >>= fetchRelated #trips
-        accessDeniedUnless (get #userId bill == currentUserId)
-        let priceInfo = billPriceInfo bill
-        render ShowView { .. }
 
     action CheckBeforeSendBillAction { billId } = do
         ensureIsUser
@@ -151,7 +143,6 @@ buildBill bill = bill
     |> set #userId currentUserId
     |> validateFieldIO #clientId (validateClientBelongsToUser currentUserId)
 
-
 billPriceInfo bill = PriceInfo {
                         includingTax = priceIncludingTax,
                         excludingTax = priceExcludingTax,
@@ -160,7 +151,6 @@ billPriceInfo bill = PriceInfo {
                             where
                                 priceIncludingTax = computePriceIncludingTax bill
                                 priceExcludingTax = excludeTax priceIncludingTax
-
 
 validateClientBelongsToUser userId clientId = do
     if clientId == "00000000-0000-0000-0000-000000000000" then
@@ -177,3 +167,17 @@ computePriceIncludingTax bill = bill |> get #trips |> map (get #price) |> sum
 
 excludeTax :: Int -> Float
 excludeTax price = fromIntegral price / (1.0 + 0.1)
+
+generateBillNumber bill = do
+    billsTodayCount :: Int <- query @Bill
+        |> filterWhere (#sentOn, get #sentOn bill)
+        |> filterWhere (#userId, get #id (get #userId bill))
+        |> fetchCount
+    let billNumberDateBlock = case get #sentOn bill of
+            Nothing -> ""
+            Just sentOn -> formatTime defaultTimeLocale "%Y%m%d" sentOn
+        billNumberCountBlock = printf "%02d" (billsTodayCount + 1)
+        billNumber = T.pack (billNumberDateBlock ++ "-" ++ billNumberCountBlock)
+    return billNumber
+          
+
