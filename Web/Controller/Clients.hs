@@ -1,6 +1,7 @@
 module Web.Controller.Clients where
 
 import Web.Controller.Prelude
+import Web.Controller.Bills
 import Web.View.Clients.Index
 import Web.View.Clients.New
 import Web.View.Clients.Edit
@@ -38,6 +39,7 @@ instance Controller ClientsController where
 
     action CreateClientAction = do
         ensureIsUser
+        -- paramOrDefault @Bool False "createBill"
         let client = newRecord @Client
         client
             |> buildClient
@@ -46,8 +48,20 @@ instance Controller ClientsController where
                 Right client -> do
                     client <- client
                         |> createRecord
-                    setSuccessMessage "Client créé"
-                    redirectTo (NewTripFromClientAction (get #id client))
+                    let bill = newRecord @Bill
+                    bill
+                        |> set #clientId (get #id client)
+                        |> buildBill
+                        >>= ifValid \case
+                            Left bill -> do
+                                userClients <- query @Client
+                                    |> filterWhere (#userId, currentUserId)
+                                    |> fetch
+                                render NewView { .. } 
+                            Right bill -> do
+                                bill <- bill |> createRecord
+                                setSuccessMessage "Client et facture créés, ajoutez une course."
+                                redirectTo (NewTripAction (get #id bill))
 
     action DeleteClientAction { clientId } = do
         client <- fetch clientId

@@ -52,9 +52,7 @@ data ClientsController
 
 data TripsController
     = NewTripAction { billId :: !(Id Bill) }
-    | NewTripFromClientAction { clientId :: !(Id Client) }
     | CreateTripAction
-    | CreateTripAndBillAction { clientId :: !(Id Client) }
     | EditTripAction { tripId :: !(Id Trip) }
     | UpdateTripAction { tripId :: !(Id Trip) }
     | DeleteTripAction { tripId :: !(Id Trip) }
