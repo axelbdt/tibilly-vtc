@@ -22,7 +22,7 @@ instance Controller UsersController where
         if param @Text "passwordHash" == "" then do
             user
                 |> buildUpdatedUser
-                |> ifValid \case
+                >>= ifValid \case
                     Left user -> render EditView { .. }
                     Right user -> do
                         user <- user
@@ -31,7 +31,7 @@ instance Controller UsersController where
         else do
             user
                 |> buildUser
-                |> ifValid \case
+                >>= ifValid \case
                     Left user -> render EditView { .. }
                     Right user -> do
                         hashed <- hashPassword  (get #passwordHash user)
@@ -50,7 +50,7 @@ instance Controller UsersController where
         let user = newRecord @User
         user
             |> buildUser
-            |> ifValid \case
+            >>= ifValid \case
                 Left user -> render NewView { .. } 
                 Right user -> do
                     hashed <- hashPassword  (get #passwordHash user)
@@ -69,12 +69,14 @@ buildUser user = user
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
     |> validatePasswordField
+    |> validateIsUnique #email
 
 buildUpdatedUser user = user
     |> fill @["email","name","immatriculation","failedLoginAttempts"]
     |> validateField #email isEmail
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
+    |> validateIsUnique #email
 
 validateImmatriculationField user = user
     |> validateField #immatriculation frenchNonEmpty
