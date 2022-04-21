@@ -57,7 +57,7 @@ instance Controller UsersController where
                     user <- user
                         |> set #passwordHash hashed
                         |> createRecord
-                    setSuccessMessage "Votre compte a été créé"
+                    setSuccessMessage "Votre compte a été créé, vous pouvez vous identifier"
                     redirectTo NewSessionAction
     -- -}
 
