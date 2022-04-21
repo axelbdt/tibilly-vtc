@@ -20,12 +20,16 @@ instance View RenderBillView where
         <div class="d-flex justify-content-between">
             <div>
                 <h2>Client</h2>
-                <p>{get #name client}</p>
-                <p>{get #address client}</p>
+                <p>
+                    {get #name client}<br/>
+                    {get #address client}
+                </p>
             </div>
             <div>
-                <p>{get #name user}<br/>
-                {renderImmatriculation user}</p>
+                <p>
+                    {get #name user}<br/>
+                    {renderImmatriculation user}
+                </p>
             </div>
         </div>
         
