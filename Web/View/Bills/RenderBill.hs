@@ -30,12 +30,18 @@ instance View RenderBillView where
         </div>
         
 
-        <h2>Course</h2>
+        <h2>Courses</h2>
         <div class="table-responsive">
             <table class="table">
+                <thead class="text-left">
+                    <th>Départ</th>
+                    <th>Arrivée</th>
+                    <th>Date</th>
+                    <th>Prix</th>
+                </thead>
                 <tbody>{forEach (get #trips bill) renderTrip}</tbody>
                 {renderPriceInfo priceInfo}
-            </table> 
+            </table>
         </div>
         |]
         where
@@ -59,7 +65,9 @@ renderImmatriculation user =
 renderTrip :: Trip -> Html
 renderTrip trip = [hsx|
     <tr>
-        <td>{renderTripDescription trip}</td>
-        <td class="text-left">{renderPrice (get #price trip)}€</td>
+        <td>{(get #start trip) }</td>
+        <td>{get #destination trip}</td>
+        <td>{renderDay (get #date trip)}</td>
+        <td>{renderPrice (get #price trip)}€</td>
     </tr>
-|] 
+|]
