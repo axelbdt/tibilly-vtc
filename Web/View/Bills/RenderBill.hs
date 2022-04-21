@@ -21,9 +21,9 @@ instance View RenderBillView where
             <div>
                 <h2>Client</h2>
                 <p>{get #name client}</p>
+                <p>{get #address client}</p>
             </div>
             <div>
-                <h2>Transporteur</h2>
                 <p>{get #name user}<br/>
                 {renderImmatriculation user}</p>
             </div>

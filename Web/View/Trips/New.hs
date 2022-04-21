@@ -12,4 +12,4 @@ instance View NewView where
     |]
 
 renderForm :: Trip -> Html
-renderForm trip = formFor trip (tripForm trip "Valider")
+renderForm trip = formFor trip (tripForm trip)

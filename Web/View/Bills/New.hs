@@ -16,7 +16,10 @@ renderForm bill userClients = formFor bill [hsx|
         <div class="flex-fill pr-2">{(selectField #clientId userClients) { placeholder = "Sélectionner un client"}}</div>
         <div class="pb-3" style="padding-top:2em"><a class="btn btn-secondary" href={NewClientAction}>Nouveau Client</a></div>
     </div>
-    {submitButton { label = "Valider" }}
+    <div class="d-flex justify-content-between mt-3">
+        <a href={pathTo (ShowBillAction (get #id bill))} class="btn btn-outline-primary">Retour</a>
+        {submitButton { label = "Valider"}}
+    </div>
 |]
 
 instance CanSelect Client where

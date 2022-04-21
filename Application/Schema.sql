@@ -30,7 +30,8 @@ CREATE TABLE clients (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     email TEXT NOT NULL,
     name TEXT NOT NULL,
-    user_id UUID NOT NULL
+    user_id UUID NOT NULL,
+    address TEXT DEFAULT '' NOT NULL
 );
 CREATE INDEX clients_user_id_index ON clients (user_id);
 CREATE INDEX bills_client_id_index ON bills (client_id);
