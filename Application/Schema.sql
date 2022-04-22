@@ -8,7 +8,6 @@ CREATE TABLE users (
     name TEXT NOT NULL,
     immatriculation TEXT NOT NULL,
     address TEXT DEFAULT '' NOT NULL,
-    vat_number TEXT DEFAULT '' NOT NULL,
     capital INT DEFAULT 0 NOT NULL,
     legal_status TEXT DEFAULT '' NOT NULL
 );

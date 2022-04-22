@@ -54,6 +54,7 @@ renderFooter user = [hsx|
                         {get #name user} {renderLegalStatus (get #legalStatus user) (get #capital user)}<br/>
                         {renderAddress (get #address user)}
                         {renderImmatriculation user}<br/>
+                        No. TVA : {vatNumberFromImmatriculation (get #immatriculation user)}
                     </p>
                 </footer>
     |]
