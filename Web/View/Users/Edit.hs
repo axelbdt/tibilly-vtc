@@ -23,7 +23,7 @@ renderForm user = formFor' user (pathTo UpdateCurrentUserAction) [hsx|
         {(textField #immatriculation) { fieldLabel = "SIREN ou SIRET", required = True }}
         {(checkboxField #hasVatNumber) {fieldLabel = "J'ai un numéro de TVA", helpText = "facultatif" }}
         {(textField #companyType) {fieldLabel = "Forme de l'entreprise", helpText = "facultatif", placeholder = "SASU, SARL, ..." }}
-        {(numberField #capital) {fieldLabel = "Capital social", helpText = "facultatif" }}
+        {(numberField #capital) {fieldLabel = "Capital social (€)", helpText = "facultatif", additionalAttributes = [("min","0")] }}
         {(textField #address) {fieldLabel = "Adresse du siège social", helpText = "facultatif" }}
     </fieldset>
     {submitButton {label =  "Modifier" }}
