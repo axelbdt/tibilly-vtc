@@ -11,33 +11,52 @@ instance View ShowView where
         <p>{get #name client}</p>
 
         <h2>Courses{addButton}</h2>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <th>Départ</th>
-                    <th>Arrivée</th>
-                    <th>Date</th>
-                    <th>Prix</th>
-                    <th></th>
-                </thead>
-                <tbody>{forEach (get #trips bill) renderTrip}</tbody>
-                {renderPriceInfo priceInfo}
-            </table>
-        </div>
+        {renderBody (get #trips bill) priceInfo}
         {sentInfo}
+        {renderButtons bill}
+    |]
+        where
+            client = get #clientId bill
+            addButton = [hsx|<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-primary ml-4">+ Ajouter</a>|]
+            sentInfo = case get #sentOn bill of
+                Just sentOn -> [hsx|<p class="text-center">Envoyée le {sentOn}</p>|]
+                Nothing -> [hsx||]
+
+renderButtons bill = [hsx|
         <div class="d-flex justify-content-between">
                 <a href={pathTo BillsAction} class="btn btn-outline-primary">Retour</a>
                 <a href={pathTo (DeleteBillAction (get #id bill))} class="btn btn-danger js-delete">Supprimer</a>
                 {sendButton}
         </div>
-    |]
-        where
-            client = get #clientId bill
-            sendButton = [hsx|<a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Envoyer</a>|]
-            addButton = [hsx|<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-primary ml-4">+ Ajouter</a>|]
-            sentInfo = case get #sentOn bill of
-                Just sentOn -> [hsx|<p class="text-center">Envoyée le {sentOn}</p>|]
-                Nothing -> [hsx||]
+        |]
+        where sendButton = if null (get #trips bill) then
+                [hsx| <a href="#" class="btn btn-primary disabled">Envoyer</a> |]
+                else
+                [hsx| <a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Envoyer</a> |]
+
+
+renderBody trips priceInfo = if null trips then
+            [hsx|
+                <p class="w-100 text-center">Aucune course sur cette facture, veuillez en ajouter une.</p>
+            |]
+        else
+            [hsx|
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Départ</th>
+                            <th>Arrivée</th>
+                            <th>Date</th>
+                            <th>Prix</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                           {forEach trips renderTrip}
+                        </tbody>
+                        {renderPriceInfo priceInfo}
+                    </table>
+                </div>
+         |]
 
 renderTrip :: Trip -> Html
 renderTrip trip = [hsx|
