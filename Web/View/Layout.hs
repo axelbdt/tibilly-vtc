@@ -18,7 +18,7 @@ defaultLayout inner = H.docTypeHtml ! A.lang "fr" $ [hsx|
     {stylesheets}
     {scripts}
 
-    <title>{pageTitleOrDefault "App"}</title>
+    <title>{pageTitleOrDefault "Tibilly : vos factures de transport en quelques clics"}</title>
 </head>
 <body>
     {navbar}
