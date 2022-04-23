@@ -72,10 +72,11 @@ buildUser user = user
     |> validateIsUnique #email
 
 buildUpdatedUser user = user
-    |> fill @["email","name","immatriculation","failedLoginAttempts"]
+    |> fill @["email","name","immatriculation","hasVatNumber","companyType","capital","address","failedLoginAttempts"]
     |> validateField #email isEmail
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
+    |> validateField #capital (isGreaterOrEqualThan 0)
     |> validateIsUnique #email
 
 validateImmatriculationField user = user

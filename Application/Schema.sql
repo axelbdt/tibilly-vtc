@@ -9,7 +9,8 @@ CREATE TABLE users (
     immatriculation TEXT NOT NULL,
     address TEXT DEFAULT '' NOT NULL,
     capital INT DEFAULT 0 NOT NULL,
-    legal_status TEXT DEFAULT '' NOT NULL
+    company_type TEXT DEFAULT '' NOT NULL,
+    has_vat_number BOOLEAN DEFAULT false NOT NULL
 );
 CREATE TABLE bills (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,

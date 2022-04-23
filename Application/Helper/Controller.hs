@@ -15,6 +15,9 @@ renderPDFResponse view = do
     pdfBytes <- renderPDF view
     respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes
 
+isGreaterOrEqualThan min value | value >= min = Success
+isGreaterOrEqualThan min value = Failure "Doit être supérieur ou égal à 0"
+
 frenchNonEmpty value = (nonEmpty |> withCustomErrorMessage "Veuillez remplir ce champ") value
 
 getCurrentDay :: IO Day

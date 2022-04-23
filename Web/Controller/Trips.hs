@@ -69,9 +69,6 @@ buildTrip trip = trip
     |> validateField #start frenchNonEmpty
     |> validateField #destination frenchNonEmpty
 
-isGreaterOrEqualThan min value | value >= min = Success
-isGreaterOrEqualThan min value = Failure "Doit être supérieur à 0"
-
 validateBillBelongsToUser userId billId = do
     bill <- fetch billId
     return

@@ -51,23 +51,25 @@ instance View RenderBillView where
 renderFooter user = [hsx|
                 <footer class="w-100 text-center" style="position:absolute;bottom:0;">
                     <p>
-                        {get #name user} {renderLegalStatus (get #legalStatus user) (get #capital user)}<br/>
+                        {get #name user} {renderCompanyType (get #companyType user) (get #capital user)}<br/>
                         {renderAddress (get #address user)}
                         {renderImmatriculation user}<br/>
-                        No. TVA : {vatNumberFromImmatriculation (get #immatriculation user)}
+                        {renderVatNumber (get #hasVatNumber user) (get #immatriculation user)}
                     </p>
                 </footer>
     |]
-    where renderLegalStatus legalStatus capital
-              | legalStatus == "" = [hsx||]
-              | capital == 0 = [hsx| {legalStatus} |]
-              | otherwise = [hsx| {legalStatus} au capital social de {renderPrice capital}€ |]
+    where renderCompanyType companyType capital
+              | companyType == "" = [hsx||]
+              | capital == 0 = [hsx| {companyType} |]
+              | otherwise = [hsx| {companyType} au capital social de {renderPrice capital}€ |]
           renderAddress address
               | address == "" = [hsx||]
-              | otherwise = [hsx| {address} <br/> |]
-          renderVATNumber vatNumber
-              | vatNumber == "" = [hsx||] 
-              | otherwise = [hsx|No. TVA : {vatNumber} |]
+              | otherwise = [hsx| Siège social : {address} <br/> |]
+          renderVatNumber hasVatNumber immatriculation =
+              if hasVatNumber then
+                  [hsx| No. TVA : {vatNumberFromImmatriculation immatriculation} |]
+              else
+                  [hsx||]
   
 
 renderImmatriculation user =
