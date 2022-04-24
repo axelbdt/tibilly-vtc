@@ -58,13 +58,17 @@ renderFooter user = [hsx|
                     </p>
                 </footer>
     |]
-    where renderCompanyType companyType capital
-              | companyType == "" = [hsx||]
-              | capital == 0 = [hsx| {companyType} |]
-              | otherwise = [hsx| {companyType} au capital social de {renderPrice capital}€ |]
-          renderAddress address
-              | address == "" = [hsx||]
-              | otherwise = [hsx| Siège social : {address} <br/> |]
+    where renderCompanyType companyType capital  =
+              case companyType of
+                    Nothing -> [hsx||]
+                    Just companyType -> case capital of
+                        0 -> [hsx| {companyType} |]
+                        capital -> [hsx| {companyType} au capital social de {renderPrice capital}€ |]
+        
+          renderAddress address =
+              case address of
+                    Nothing -> [hsx||]
+                    Just address ->  [hsx| Siège social : {address} <br/> |]
           renderVatNumber hasVatNumber immatriculation =
               if hasVatNumber then
                   [hsx| No. TVA : {vatNumberFromImmatriculation immatriculation} |]

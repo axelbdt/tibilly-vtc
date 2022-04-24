@@ -7,9 +7,9 @@ CREATE TABLE users (
     failed_login_attempts INT DEFAULT 0 NOT NULL,
     name TEXT NOT NULL,
     immatriculation TEXT NOT NULL,
-    address TEXT DEFAULT '' NOT NULL,
+    address TEXT DEFAULT NULL,
     capital INT DEFAULT 0 NOT NULL,
-    company_type TEXT DEFAULT '' NOT NULL,
+    company_type TEXT DEFAULT NULL,
     has_vat_number BOOLEAN DEFAULT false NOT NULL
 );
 CREATE TABLE bills (
@@ -40,6 +40,6 @@ CREATE TABLE clients (
 CREATE INDEX clients_user_id_index ON clients (user_id);
 CREATE INDEX bills_client_id_index ON bills (client_id);
 ALTER TABLE bills ADD CONSTRAINT bills_ref_client_id FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE NO ACTION;
-ALTER TABLE bills ADD CONSTRAINT bills_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION;
+ALTER TABLE bills ADD CONSTRAINT bills_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
 ALTER TABLE clients ADD CONSTRAINT clients_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION;
 ALTER TABLE trips ADD CONSTRAINT trips_ref_bill_id FOREIGN KEY (bill_id) REFERENCES bills (id) ON DELETE CASCADE;
