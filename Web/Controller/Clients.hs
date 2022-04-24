@@ -82,6 +82,7 @@ instance Controller ClientsController where
 
 buildClient client = client
     |> fill @["name","email","address","userId"]
+    |> emptyValueToNothing #address
     |> set #userId currentUserId
     |> validateField #email isEmail
     |> validateField #name frenchNonEmpty

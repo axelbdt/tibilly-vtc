@@ -35,7 +35,7 @@ CREATE TABLE clients (
     email TEXT NOT NULL,
     name TEXT NOT NULL,
     user_id UUID NOT NULL,
-    address TEXT DEFAULT '' NOT NULL
+    address TEXT DEFAULT NULL
 );
 CREATE INDEX clients_user_id_index ON clients (user_id);
 CREATE INDEX bills_client_id_index ON bills (client_id);
