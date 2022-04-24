@@ -84,8 +84,11 @@ buildUpdatedUser user = user
     |> validateIsUnique #email
 
 validateImmatriculationField user = user
+    |> set #immatriculation cleanImmatriculation
     |> validateField #immatriculation frenchNonEmpty
     |> validateField #immatriculation isSiretOrSiren 
+    where
+        cleanImmatriculation = T.replace " " "" (get #immatriculation user)
 
 
 isSiretOrSiren :: Text -> ValidatorResult
