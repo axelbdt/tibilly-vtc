@@ -1,6 +1,7 @@
 module Web.Controller.Bills where
 
 import qualified Data.Text as T
+import qualified Data.Text.Encoding as TE
 import Text.Printf
 import Data.Time.Clock
 import Data.Time.Calendar
@@ -13,6 +14,7 @@ import Web.View.Bills.CheckBeforeSend
 import Web.View.Bills.RenderBill
 
 import Web.Mail.Bills.SendBillToClient
+import Language.Haskell.Exts (SrcInfo(fileName))
 
 instance Controller BillsController where
     action BillsAction = do
@@ -53,13 +55,14 @@ instance Controller BillsController where
             >>= fetchRelated #clientId
             >>= pure . modify #trips (orderBy #date)
             >>= fetchRelated #trips
-        let sentOn = Just (utctDay currentTime)
+        let currentDay = utctDay currentTime
+        let sentOn = Just currentDay
         let dbill = fbill |> set #sentOn sentOn
         billNumber <- generateBillNumber dbill
         let bill = dbill |> set #number billNumber
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceInfo = billPriceInfo bill
-        renderPDFResponse RenderBillView { .. }
+        renderPDFResponse (billFileName bill) RenderBillView { .. }
 
     -- TODO: Refacto when I have learned about Monads
     action SendBillAction { billId } = do
@@ -180,4 +183,10 @@ generateBillNumber bill = do
         billNumber = T.pack (billNumberDateBlock ++ "-" ++ billNumberCountBlock)
     return billNumber
           
-
+billFileName bill =
+    TE.encodeUtf8 fileName
+    where
+        fileName = "Facture " ++ get #name (get #clientId bill) ++ " " ++ dateSuffix
+        dateSuffix= case get #sentOn bill of
+            Just sentOn -> T.pack $ formatTime defaultTimeLocale "%d-%m-%Y" sentOn
+            Nothing -> ""

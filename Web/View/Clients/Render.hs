@@ -4,7 +4,7 @@ import Web.View.Prelude
 clientForm client = [hsx|
     {(textField #name) { fieldLabel = "Nom", required = True }}
     {(textField #email){ fieldLabel = "E-mail", required = True }}
-    {(textField #address){ fieldLabel = "Adresse (facultatif)" }}
+    {(textField #address){ fieldLabel = "Adresse", helpText = "facultatif" }}
     {(hiddenField #userId)}
     {submitButton}
 |]

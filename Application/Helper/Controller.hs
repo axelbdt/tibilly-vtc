@@ -11,9 +11,9 @@ renderPDF view = do
     viewHtml <- renderHtml view 
     convertHtml viewHtml
 
-renderPDFResponse view = do
+renderPDFResponse fileName view = do
     pdfBytes <- renderPDF view
-    respondAndExit $ responseLBS status200 [(hContentType, "application/pdf")] pdfBytes
+    respondAndExit $ responseLBS status200 [(hContentType, "application/pdf"),(hContentDisposition,"inline; filename=\"" ++ fileName ++ ".pdf\"")] pdfBytes
 
 isGreaterOrEqualThan min value | value >= min = Success
 isGreaterOrEqualThan min value = Failure "Doit être supérieur ou égal à 0"
