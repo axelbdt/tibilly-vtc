@@ -18,7 +18,7 @@ instance View RenderBillView where
                     Facture<br/>
                     Transport de personnes
                 </h1>
-                <p>Facture no. {get #number bill}, expédiée le : {sentOn}, échéance immédiate.</p>
+                <p>Facture no. {renderBillNumber (get #sentOn bill) (get #number bill)}, expédiée le : {sentOn}, échéance immédiate.</p>
                 <h2>Client</h2>
                 <p>
                     {get #name client}<br/>

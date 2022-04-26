@@ -21,10 +21,11 @@ instance View CheckBeforeSendView where
 
 
 renderForm bill = formFor' bill (pathTo (SendBillAction (get #id bill))) [hsx|
-    {numberField #number}
+    {hiddenField #sentOn}
+    {hiddenField #number}
     <div class="d-flex justify-content-between mt-3">
         <a href={pathTo (ShowBillAction (get #id bill))} class="btn btn-outline-primary">Retour</a>
-        {submitButton { label = "Envoyer"}}
+        {submitButton { label = "Valider"}}
     </div>
 
 |]

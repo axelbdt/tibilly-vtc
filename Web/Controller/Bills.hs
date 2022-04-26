@@ -78,9 +78,14 @@ instance Controller BillsController where
         let bill = fbill |> set #sentOn (Just sentOn) |> set #number (Just billNumber)
         renderPDFResponse (billFileName bill) RenderBillView { .. }
 
-    -- TODO: Refacto when I have learned about Monads
+    -- TODO: Manage case of already sent bill
     action SendBillAction { billId } = do
         ensureIsUser
+        bill <- fetch billId
+        bill <- bill
+            |> fill @["sentOn","number"]
+            |> updateRecord
+        setSuccessMessage "Facture enregistrée"
         redirectTo BillsAction
 
     action CreateBillAction = do
@@ -137,26 +142,18 @@ computePriceIncludingTax bill = bill |> get #trips |> map (get #price) |> sum
 excludeTax :: Int -> Float
 excludeTax price = fromIntegral price / (1.0 + 0.1)
 
--- TODO: generate actual number
 generateBillNumber bill = do
-    return 0
-
-oldGenerateBillNumber bill = do
-    billsTodayCount :: Int <- query @Bill
-        |> filterWhere (#sentOn, get #sentOn bill)
-        |> filterWhere (#userId, get #id (get #userId bill))
-        |> fetchCount
-    let billNumberDateBlock = case get #sentOn bill of
-            Nothing -> ""
-            Just sentOn -> formatTime defaultTimeLocale "%Y%m%d" sentOn
-        billNumberCountBlock = printf "%02d" (billsTodayCount + 1)
-        billNumber = T.pack (billNumberDateBlock ++ "-" ++ billNumberCountBlock)
+    currentTime <- getCurrentTime
+    let (year, month, day) = toGregorian $ utctDay currentTime
+    maxNumberThisMonth :: Int <- sqlQueryScalar "SELECT MAX(number) AS billCount FROM Bills WHERE EXTRACT(MONTH FROM sent_on) = ? AND EXTRACT(YEAR FROM sent_on) = ?" (month, year)
+    let billNumber = maxNumberThisMonth + 1
     return billNumber
-          
+
 billFileName bill =
     TE.encodeUtf8 fileName
     where
         fileName = "Facture " ++ get #name (get #clientId bill) ++ " " ++ dateSuffix
         dateSuffix= case get #sentOn bill of
+            -- TODO: factor format time ?
             Just sentOn -> T.pack $ formatTime defaultTimeLocale "%d-%m-%Y" sentOn
             Nothing -> ""
