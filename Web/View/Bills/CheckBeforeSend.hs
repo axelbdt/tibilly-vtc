@@ -6,7 +6,7 @@ data CheckBeforeSendView = CheckBeforeSendView { bill :: Include "clientId" Bill
 
 instance View CheckBeforeSendView where
     html CheckBeforeSendView { .. } = [hsx|
-        <h1>Vérifiez votre facture {billNumber}</h1>
+        <h1>Vérifiez votre facture</h1>
         <p>Vérifiez votre facture avant envoi.</p>
         <p>Destinataire : {clientInfo}</p>
         <div class="w-100" style="height:32em">
