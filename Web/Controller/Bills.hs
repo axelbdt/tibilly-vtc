@@ -153,7 +153,4 @@ billFileName bill =
     TE.encodeUtf8 fileName
     where
         fileName = "Facture " ++ get #name (get #clientId bill) ++ " " ++ dateSuffix
-        dateSuffix= case get #sentOn bill of
-            -- TODO: factor format time ?
-            Just sentOn -> T.pack $ formatTime defaultTimeLocale "%d-%m-%Y" sentOn
-            Nothing -> ""
+        dateSuffix= maybe "" show (get #sentOn bill)
