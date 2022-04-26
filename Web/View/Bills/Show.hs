@@ -7,7 +7,7 @@ data ShowView = ShowView { bill :: Include' ["clientId", "trips"] Bill, priceInf
  
 instance View ShowView where
     html ShowView { .. } = [hsx|
-        <h1>Facture</h1>
+        <h1>Facture {renderBillNumber (get #sentOn bill) (get #number bill)}</h1>
         <p>{get #name client}</p>
 
         <h2>Courses{addButton}</h2>
