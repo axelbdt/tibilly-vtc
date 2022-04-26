@@ -35,7 +35,7 @@ data BillsController
     | ShowBillAction { billId :: !(Id Bill) }
     | CheckBeforeSendBillAction { billId :: !(Id Bill) }
     | DeleteBillAction { billId :: !(Id Bill) }
-    | GenerateBillPDFAction { billId :: !(Id Bill) }
+    | GenerateBillPDFAction { billId :: !(Id Bill), billNumber :: Int }
     | SendBillAction { billId :: !(Id Bill) }
     | CreateBillAction
     deriving (Eq, Show, Data)

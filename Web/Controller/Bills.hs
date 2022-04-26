@@ -14,7 +14,6 @@ import Web.View.Bills.CheckBeforeSend
 import Web.View.Bills.RenderBill
 
 import Web.Mail.Bills.SendBillToClient
-import Language.Haskell.Exts (SrcInfo(fileName))
 
 instance Controller BillsController where
     action BillsAction = do
@@ -46,76 +45,44 @@ instance Controller BillsController where
         let bill = newRecord
         render NewView { .. }
 
-    -- TODO: Refacto when I have learned about Monads
-    action GenerateBillPDFAction { billId } = do
+    action CheckBeforeSendBillAction { billId } = do
         ensureIsUser
-        currentTime <- getCurrentTime
         fbill <- fetch billId
-            >>= fetchRelated #userId
             >>= fetchRelated #clientId
-            >>= pure . modify #trips (orderBy #date)
-            >>= fetchRelated #trips
-        let currentDay = utctDay currentTime
-        let sentOn = Just currentDay
-        let dbill = fbill |> set #sentOn sentOn
-        billNumber <- generateBillNumber dbill
-        let bill = dbill |> set #number (Just 0) -- billNumber
-        accessDeniedUnless (currentUserId == get #id (get #userId bill))
-        let priceInfo = billPriceInfo bill
-        renderPDFResponse (billFileName bill) RenderBillView { .. }
+        accessDeniedUnless (get #userId fbill == currentUserId)
+        -- TODO: use fetchRelated #trips
+        tripCount <- query @Trip
+            |> filterWhere (#billId, billId)
+            |> fetchCount
+        if tripCount == 0 then do
+            setErrorMessage "Ajoutez d'abord une course à la facture"
+            redirectTo (ShowBillAction billId)
+        else do
+            billNumber <- generateBillNumber fbill
+            currentTime <- getCurrentTime
+            let currentDay = utctDay currentTime
+            let bill = fbill |> set #sentOn (Just currentDay) |> set #number (Just billNumber)
+            render CheckBeforeSendView { .. }
 
     -- TODO: Refacto when I have learned about Monads
-    action SendBillAction { billId } = do
+    action GenerateBillPDFAction { billId, billNumber } = do
         ensureIsUser
-        currentTime <- getCurrentTime
         fbill <- fetch billId
             >>= fetchRelated #userId
             >>= fetchRelated #clientId
             >>= pure . modify #trips (orderBy #date)
             >>= fetchRelated #trips
         accessDeniedUnless (currentUserId == get #id (get #userId fbill))
-        -- TODO: use fetchRelated #trips
-        tripCount <- query @Trip
-            |> filterWhere (#billId, billId)
-            |> fetchCount
-        if tripCount == 0 then do
-            setErrorMessage "Ajoutez d'abord une course à la facture"
-            redirectTo (ShowBillAction billId)
-        else do
-            let priceInfo = billPriceInfo fbill
-            case get #sentOn fbill of
-                Nothing -> do
-                    let sentOn = Just (utctDay currentTime)
-                    let dbill = fbill |> set #sentOn sentOn 
-                    billNumber <- generateBillNumber dbill
-                    let bill = dbill |> set #number (Just 0) -- billNumber
-                    pdf <- renderPDF RenderBillView { .. }
-                    -- sendMail SendBillToClientMail { .. }
-                    ubill <- fetch billId
-                    ubill
-                        |> set #number (Just 0) -- billNumber
-                        |> set #sentOn sentOn
-                        |> updateRecord
-                    setSuccessMessage "Facture envoyée"
-                    redirectTo BillsAction
-                Just _ -> do
-                    setErrorMessage "Facture déjà envoyée"
-                    redirectTo BillsAction
+        let priceInfo = billPriceInfo fbill
+        currentTime <- getCurrentTime
+        let currentDay = utctDay currentTime
+        let bill = fbill |> set #sentOn (Just currentDay) |> set #number (Just billNumber)
+        renderPDFResponse (billFileName bill) RenderBillView { .. }
 
-    action CheckBeforeSendBillAction { billId } = do
+    -- TODO: Refacto when I have learned about Monads
+    action SendBillAction { billId } = do
         ensureIsUser
-        bill <- fetch billId
-            >>= fetchRelated #clientId
-        accessDeniedUnless (get #userId bill == currentUserId)
-        -- TODO: use fetchRelated #trips
-        tripCount <- query @Trip
-            |> filterWhere (#billId, billId)
-            |> fetchCount
-        if tripCount == 0 then do
-            setErrorMessage "Ajoutez d'abord une course à la facture"
-            redirectTo (ShowBillAction billId)
-        else do
-            render CheckBeforeSendView { .. }
+        redirectTo BillsAction
 
     action CreateBillAction = do
         ensureIsUser
@@ -172,6 +139,9 @@ excludeTax :: Int -> Float
 excludeTax price = fromIntegral price / (1.0 + 0.1)
 
 generateBillNumber bill = do
+    return 0
+
+oldGenerateBillNumber bill = do
     billsTodayCount :: Int <- query @Bill
         |> filterWhere (#sentOn, get #sentOn bill)
         |> filterWhere (#userId, get #id (get #userId bill))
