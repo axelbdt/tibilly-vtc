@@ -58,11 +58,16 @@ instance Controller BillsController where
             setErrorMessage "Ajoutez d'abord une course à la facture"
             redirectTo (ShowBillAction billId)
         else do
-            billNumber <- generateBillNumber fbill
-            currentTime <- getCurrentTime
-            let currentDay = utctDay currentTime
-            let bill = fbill |> set #sentOn (Just currentDay) |> set #number (Just billNumber)
-            render CheckBeforeSendView { .. }
+            case get #sentOn fbill of
+                Nothing -> do
+                    billNumber <- generateBillNumber fbill
+                    currentTime <- getCurrentTime
+                    let currentDay = utctDay currentTime
+                    let bill = fbill |> set #sentOn (Just currentDay) |> set #number (Just billNumber)
+                    render CheckBeforeSendView { .. }
+                Just _ -> do
+                    let bill = fbill
+                    render CheckBeforeSendView { .. }
 
     -- TODO: Refacto when I have learned about Monads
     action GenerateBillPDFAction { billId, billNumber, sentOnText } = do

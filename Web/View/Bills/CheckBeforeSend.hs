@@ -2,7 +2,7 @@ module Web.View.Bills.CheckBeforeSend where
 import Web.View.Prelude
 
 -- TODO: remove currentDay and use sentOn
-data CheckBeforeSendView = CheckBeforeSendView { bill :: Include "clientId" Bill, billNumber :: Int }
+data CheckBeforeSendView = CheckBeforeSendView { bill :: Include "clientId" Bill }
 
 instance View CheckBeforeSendView where
     html CheckBeforeSendView { .. } = [hsx|
@@ -18,6 +18,7 @@ instance View CheckBeforeSendView where
                 client = get #clientId bill
                 clientInfo = [hsx| {get #name client} ({get #email client}) |]
                 sentOnText = maybe "" show (get #sentOn bill)
+                billNumber = fromMaybe 0 (get #number bill)
 
 
 renderForm bill = formFor' bill (pathTo (SendBillAction (get #id bill))) [hsx|
