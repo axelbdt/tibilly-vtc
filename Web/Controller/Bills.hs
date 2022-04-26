@@ -65,7 +65,7 @@ instance Controller BillsController where
             render CheckBeforeSendView { .. }
 
     -- TODO: Refacto when I have learned about Monads
-    action GenerateBillPDFAction { billId, billNumber } = do
+    action GenerateBillPDFAction { billId, billNumber, sentOnText } = do
         ensureIsUser
         fbill <- fetch billId
             >>= fetchRelated #userId
@@ -74,9 +74,8 @@ instance Controller BillsController where
             >>= fetchRelated #trips
         accessDeniedUnless (currentUserId == get #id (get #userId fbill))
         let priceInfo = billPriceInfo fbill
-        currentTime <- getCurrentTime
-        let currentDay = utctDay currentTime
-        let bill = fbill |> set #sentOn (Just currentDay) |> set #number (Just billNumber)
+        let sentOn = parseTimeOrError True defaultTimeLocale "%Y-%m-%d" (T.unpack sentOnText)
+        let bill = fbill |> set #sentOn (Just sentOn) |> set #number (Just billNumber)
         renderPDFResponse (billFileName bill) RenderBillView { .. }
 
     -- TODO: Refacto when I have learned about Monads
@@ -138,6 +137,7 @@ computePriceIncludingTax bill = bill |> get #trips |> map (get #price) |> sum
 excludeTax :: Int -> Float
 excludeTax price = fromIntegral price / (1.0 + 0.1)
 
+-- TODO: generate actual number
 generateBillNumber bill = do
     return 0
 
