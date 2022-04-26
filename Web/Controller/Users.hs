@@ -65,8 +65,6 @@ instance Controller UsersController where
 -- TODO: translate error messages
 buildUser user = user
     |> fill @["email","name","immatriculation","passwordHash","failedLoginAttempts"]
-    |> emptyValueToNothing #companyType
-    |> emptyValueToNothing #address
     |> validateField #email isEmail
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
@@ -80,7 +78,7 @@ buildUpdatedUser user = user
     |> validateField #email isEmail
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
-    |> validateField #capital (isGreaterOrEqualThan 0)
+    |> validateField #capital validateCapital
     |> validateIsUnique #email
 
 validateImmatriculationField user = user
@@ -90,6 +88,9 @@ validateImmatriculationField user = user
     where
         cleanImmatriculation = T.replace " " "" (get #immatriculation user)
 
+validateCapital capital = case capital of
+    Nothing -> Success
+    Just capital -> isGreaterOrEqualThan 0 capital
 
 isSiretOrSiren :: Text -> ValidatorResult
 isSiretOrSiren immatriculation =

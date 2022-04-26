@@ -8,7 +8,7 @@ CREATE TABLE users (
     name TEXT NOT NULL,
     immatriculation TEXT NOT NULL,
     address TEXT DEFAULT NULL,
-    capital INT DEFAULT 0 NOT NULL,
+    capital INT DEFAULT NULL,
     company_type TEXT DEFAULT NULL,
     has_vat_number BOOLEAN DEFAULT false NOT NULL
 );
@@ -18,7 +18,7 @@ CREATE TABLE bills (
     client_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     sent_on DATE,
-    number TEXT DEFAULT '' NOT NULL
+    number INT DEFAULT NULL
 );
 CREATE TABLE trips (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,

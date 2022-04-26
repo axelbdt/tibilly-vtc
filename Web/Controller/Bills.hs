@@ -59,7 +59,7 @@ instance Controller BillsController where
         let sentOn = Just currentDay
         let dbill = fbill |> set #sentOn sentOn
         billNumber <- generateBillNumber dbill
-        let bill = dbill |> set #number billNumber
+        let bill = dbill |> set #number (Just 0) -- billNumber
         accessDeniedUnless (currentUserId == get #id (get #userId bill))
         let priceInfo = billPriceInfo bill
         renderPDFResponse (billFileName bill) RenderBillView { .. }
@@ -88,12 +88,12 @@ instance Controller BillsController where
                     let sentOn = Just (utctDay currentTime)
                     let dbill = fbill |> set #sentOn sentOn 
                     billNumber <- generateBillNumber dbill
-                    let bill = dbill |> set #number billNumber
+                    let bill = dbill |> set #number (Just 0) -- billNumber
                     pdf <- renderPDF RenderBillView { .. }
                     -- sendMail SendBillToClientMail { .. }
                     ubill <- fetch billId
                     ubill
-                        |> set #number billNumber
+                        |> set #number (Just 0) -- billNumber
                         |> set #sentOn sentOn
                         |> updateRecord
                     setSuccessMessage "Facture envoyée"

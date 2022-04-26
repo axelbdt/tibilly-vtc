@@ -62,8 +62,8 @@ renderFooter user = [hsx|
               case companyType of
                     Nothing -> [hsx||]
                     Just companyType -> case capital of
-                        0 -> [hsx| {companyType} |]
-                        capital -> [hsx| {companyType} au capital social de {renderPrice capital}€ |]
+                        Nothing -> [hsx| {companyType} |]
+                        Just capital -> [hsx| {companyType} au capital social de {renderPrice capital}€ |]
         
           renderAddress address =
               case address of

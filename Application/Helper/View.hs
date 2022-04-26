@@ -18,7 +18,9 @@ renderDay = T.pack . formatTime defaultTimeLocale "%d/%m/%Y"
 
 renderBillName bill = case get #sentOn bill of
     Nothing -> "Brouillon du " ++ (renderDay . utctDay $ get #createdAt bill)
-    Just sentOn -> get #number bill
+    Just sentOn -> case get #number bill of
+        Nothing -> ""
+        Just number -> show number
 
 vatNumberFromImmatriculation immatriculationNumber =
     "FR" ++ key ++ siren
