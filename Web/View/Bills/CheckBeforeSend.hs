@@ -9,7 +9,7 @@ instance View CheckBeforeSendView where
         <h1>Vérifiez votre facture {billNumber}</h1>
         <p>Vérifiez votre facture avant envoi.</p>
         <p>Destinataire : {clientInfo}</p>
-        <div class="w-100" style="height:40em">
+        <div class="w-100" style="height:32em">
             <iframe class="w-100 h-100" src={pathTo (GenerateBillPDFAction (get #id bill) billNumber sentOnText)} title="Bill" allowfullscreen></iframe>
         </div>
         {renderForm bill} 
