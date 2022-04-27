@@ -69,7 +69,7 @@ buildUser user = user
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
     |> validatePasswordField
-    |> validateIsUnique #email
+    |> frenchValidateIsUnique #email
 
 buildUpdatedUser user = user
     |> fill @["email","name","immatriculation","hasVatNumber","companyType","capital","address","failedLoginAttempts"]
@@ -79,7 +79,7 @@ buildUpdatedUser user = user
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
     |> validateField #capital validateCapital
-    |> validateIsUnique #email
+    |> frenchValidateIsUnique #email
 
 validateImmatriculationField user = user
     |> set #immatriculation cleanImmatriculation

@@ -24,6 +24,8 @@ frenchIsEmail = isEmail |> withCustomErrorMessage "Doit être un e-mail valide"
 
 frenchHasMinLength length = hasMinLength length |> withCustomErrorMessage ("Doit avoir une longueur de " ++ show length ++ " charactères minimum")
 
+frenchValidateIsUnique field = withCustomErrorMessageIO "Cet e-mail est déjà utilisé" frenchValidateIsUnique field
+
 getCurrentDay :: IO Day
 getCurrentDay = fmap utctDay getCurrentTime
 
