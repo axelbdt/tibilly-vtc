@@ -25,7 +25,7 @@ instance View ShowView where
 renderButtons bill = [hsx|
         <div class="d-flex justify-content-between">
                 <a href={pathTo BillsAction} class="btn btn-outline-primary">Retour</a>
-                <a href={pathTo (DeleteBillAction (get #id bill))} class="btn btn-danger js-delete">Supprimer</a>
+                <a href={pathTo (DeleteBillAction (get #id bill))} class="btn btn-danger js-delete" data-confirm="Êtes-vous sûr de vouloir supprimer cette facture ?">Supprimer</a>
                 {sendButton}
         </div>
         |]
@@ -75,7 +75,7 @@ renderTrip trip = [hsx|
                   </a>
               |]
               delete = [hsx|
-                  <a href={DeleteTripAction (get #id trip)} title="Supprimer" class="js-delete text-muted">
+                  <a href={DeleteTripAction (get #id trip)} title="Supprimer" class="js-delete" data-confirm="Êtes-vous sûr de vouloir supprimer cette course ?">
                       <button class="btn btn-outline-secondary" type="button"><img src="icons/trash.svg" alt="Supprimer"/></button>
                   </a>
               |]
