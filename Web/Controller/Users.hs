@@ -83,7 +83,8 @@ buildUpdatedUser user = user
     |> validateField #email frenchIsEmail
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
-    |> validateField #capital validateCapital
+    |> validateField #capital (maybe Success (isGreaterOrEqualThan 0))
+    -- --|> validateField #companyType (maybe Success (isInList companyTypeList))
     |> frenchValidateIsUnique #email
 
 validateImmatriculationField user = user
@@ -92,10 +93,6 @@ validateImmatriculationField user = user
     |> validateField #immatriculation isSiretOrSiren 
     where
         cleanImmatriculation = T.replace " " "" (get #immatriculation user)
-
-validateCapital capital = case capital of
-    Nothing -> Success
-    Just capital -> isGreaterOrEqualThan 0 capital
 
 isSiretOrSiren :: Text -> ValidatorResult
 isSiretOrSiren immatriculation =
