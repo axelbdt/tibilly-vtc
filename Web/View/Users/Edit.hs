@@ -22,7 +22,7 @@ renderForm user ct = formFor' user (pathTo UpdateCurrentUserAction) [hsx|
         {(textField #name) { fieldLabel = "Nom de l'entreprise", required = True}}
         {(textField #immatriculation) { fieldLabel = "SIREN ou SIRET", required = True }}
         {(checkboxField #hasVatNumber) { fieldLabel = "J'ai un numéro de TVA", helpText = "facultatif" }}
-        {(selectField #companyType (Nothing:(map Just ct))) { fieldLabel = "Forme de l'entreprise", helpText = "facultatif" }}
+        {(selectField #companyType (Nothing:(map Just ct))) { fieldLabel = "Type d'entreprise", helpText = "facultatif" }}
         {(numberField #capital) {fieldLabel = "Capital social (€)", helpText = "facultatif", additionalAttributes = [("min","0")] }}
         {(textField #address) {fieldLabel = "Adresse du siège social", helpText = "facultatif" }}
     </fieldset>
