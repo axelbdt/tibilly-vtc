@@ -15,6 +15,7 @@ instance Controller UsersController where
     action ShowCurrentUserAction = do
         user <- fetch currentUserId
                     |> fmap (set #passwordHash "")
+        let companyTypes = companyTypeList
         render EditView { .. }
 
     action UpdateCurrentUserAction = do
@@ -23,7 +24,9 @@ instance Controller UsersController where
             user
                 |> buildUpdatedUser
                 >>= ifValid \case
-                    Left user -> render EditView { .. }
+                    Left user -> do
+                        let companyTypes = companyTypeList
+                        render EditView { .. }
                     Right user -> do
                         user <- user
                             |> updateRecord
@@ -32,7 +35,9 @@ instance Controller UsersController where
             user
                 |> buildUser
                 >>= ifValid \case
-                    Left user -> render EditView { .. }
+                    Left user -> do
+                        let companyTypes = companyTypeList
+                        render EditView { .. }
                     Right user -> do
                         hashed <- hashPassword  (get #passwordHash user)
                         user <- user
@@ -107,3 +112,5 @@ passwordMatch pw1 pw2 =
     if pw1 == pw2
         then Success
         else Failure "Les mots de passe ne correspondent pas"
+
+companyTypeList = ["EI","EIRL","EURL","SNC","SA","SARL","SAS","SASU"]

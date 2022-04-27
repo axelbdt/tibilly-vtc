@@ -1,15 +1,15 @@
 module Web.View.Users.Edit where
 import Web.View.Prelude
 
-data EditView = EditView { user :: User }
+data EditView = EditView { user :: User, companyTypes :: [Text] }
 
 instance View EditView where
     html EditView { .. } = [hsx|
         <h1 class="text-center">Mon Profil</h1>
-        {renderForm user}
+        {renderForm user companyTypes}
     |]
 
-renderForm user = formFor' user (pathTo UpdateCurrentUserAction) [hsx|
+renderForm user ct = formFor' user (pathTo UpdateCurrentUserAction) [hsx|
     <fieldset>
         <legend>Mon compte</legend>
         {(textField #email) { fieldLabel = "Adresse e-mail", required = True }}
@@ -21,10 +21,17 @@ renderForm user = formFor' user (pathTo UpdateCurrentUserAction) [hsx|
         <p>Ces informations apparaîtront sur vos factures</p>
         {(textField #name) { fieldLabel = "Nom de l'entreprise", required = True}}
         {(textField #immatriculation) { fieldLabel = "SIREN ou SIRET", required = True }}
-        {(checkboxField #hasVatNumber) {fieldLabel = "J'ai un numéro de TVA", helpText = "facultatif" }}
-        {(textField #companyType) {fieldLabel = "Forme de l'entreprise", helpText = "facultatif", placeholder = "SASU, SARL, ..." }}
+        {(checkboxField #hasVatNumber) { fieldLabel = "J'ai un numéro de TVA", helpText = "facultatif" }}
+        {(selectField #companyType (Nothing:(map Just ct))) { fieldLabel = "Forme de l'entreprise", helpText = "facultatif" }}
         {(numberField #capital) {fieldLabel = "Capital social (€)", helpText = "facultatif", additionalAttributes = [("min","0")] }}
         {(textField #address) {fieldLabel = "Adresse du siège social", helpText = "facultatif" }}
     </fieldset>
     {submitButton {label =  "Modifier" }}
 |]
+
+instance CanSelect (Maybe Text) where
+    type SelectValue (Maybe Text) = Maybe Text
+    selectValue (Just companyType) = Just companyType
+    selectValue Nothing = Nothing
+    selectLabel (Just companyType) = companyType
+    selectLabel Nothing = "(non précisé)"
