@@ -42,7 +42,7 @@ renderBody trips priceInfo = if null trips then
         else
             [hsx|
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                             <th>Départ</th>
                             <th>Arrivée</th>
@@ -69,6 +69,14 @@ renderTrip trip = [hsx|
     </tr>
 |]
           where
-              edit = [hsx|<a href={EditTripAction (get #id trip)} class="text-muted">Modifier</a>|]
-              delete = [hsx|<a href={DeleteTripAction (get #id trip)} class="js-delete text-muted">Supprimer</a>|]
+              edit = [hsx|
+                  <a href={EditTripAction (get #id trip)} class="text-muted" title="Modifier">
+                      <button class="btn btn-outline-secondary" type="button"><img src="icons/pencil.svg" alt="Modifier"/></button>
+                  </a>
+              |]
+              delete = [hsx|
+                  <a href={DeleteTripAction (get #id trip)} title="Supprimer" class="js-delete text-muted">
+                      <button class="btn btn-outline-secondary" type="button"><img src="icons/trash.svg" alt="Supprimer"/></button>
+                  </a>
+              |]
 

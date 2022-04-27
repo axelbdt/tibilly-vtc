@@ -39,7 +39,7 @@ CREATE TABLE clients (
 );
 CREATE INDEX clients_user_id_index ON clients (user_id);
 CREATE INDEX bills_client_id_index ON bills (client_id);
-ALTER TABLE bills ADD CONSTRAINT bills_ref_client_id FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE NO ACTION;
+ALTER TABLE bills ADD CONSTRAINT bills_ref_client_id FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE;
 ALTER TABLE bills ADD CONSTRAINT bills_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
 ALTER TABLE clients ADD CONSTRAINT clients_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION;
 ALTER TABLE trips ADD CONSTRAINT trips_ref_bill_id FOREIGN KEY (bill_id) REFERENCES bills (id) ON DELETE CASCADE;

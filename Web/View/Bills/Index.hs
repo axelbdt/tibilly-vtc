@@ -18,7 +18,11 @@ renderBill bill = [hsx|
     <tr>
         <td><a href={ShowBillAction (get #id bill)}>{renderBillName bill}</a></td>
         <td>{get #name client}</td>
-        <td><a href={DeleteBillAction (get #id bill)} class="js-delete text-muted" data-confirm="Êtes-vous sûr de vouloir supprimer cette facture ?">Supprimer</a></td>
+        <td>
+            <a href={DeleteBillAction (get #id bill)} alt="Supprimer" class="js-delete text-muted" data-confirm="Êtes-vous sûr de vouloir supprimer cette facture ?">
+                <button class="btn btn-outline-secondary" type="button"><img src="icons/trash.svg" alt="Supprimer"/></button>
+            </a>
+        </td>
     </tr>
 |]
     where client = get #clientId bill
