@@ -18,7 +18,11 @@ renderPDFResponse fileName view = do
 isGreaterOrEqualThan min value | value >= min = Success
 isGreaterOrEqualThan min value = Failure "Doit être supérieur ou égal à 0"
 
-frenchNonEmpty value = (nonEmpty |> withCustomErrorMessage "Veuillez remplir ce champ") value
+frenchNonEmpty value = (nonEmpty |> withCustomErrorMessage "Champ obligatoire") value
+
+frenchIsEmail = isEmail |> withCustomErrorMessage "Doit être un e-mail valide"
+
+frenchHasMinLength length = hasMinLength length |> withCustomErrorMessage ("Doit avoir une longueur de " ++ show length ++ " charactères minimum")
 
 getCurrentDay :: IO Day
 getCurrentDay = fmap utctDay getCurrentTime

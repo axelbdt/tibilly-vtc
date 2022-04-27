@@ -65,7 +65,7 @@ instance Controller UsersController where
 -- TODO: translate error messages
 buildUser user = user
     |> fill @["email","name","immatriculation","passwordHash","failedLoginAttempts"]
-    |> validateField #email isEmail
+    |> validateField #email frenchIsEmail
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
     |> validatePasswordField
@@ -75,7 +75,7 @@ buildUpdatedUser user = user
     |> fill @["email","name","immatriculation","hasVatNumber","companyType","capital","address","failedLoginAttempts"]
     |> emptyValueToNothing #companyType
     |> emptyValueToNothing #address
-    |> validateField #email isEmail
+    |> validateField #email frenchIsEmail
     |> validateField #name frenchNonEmpty
     |> validateImmatriculationField
     |> validateField #capital validateCapital
@@ -100,7 +100,7 @@ isSiretOrSiren immatriculation =
 
 validatePasswordField user = user
     |> validateField #passwordHash frenchNonEmpty
-    |> validateField #passwordHash (hasMinLength 8)
+    |> validateField #passwordHash (frenchHasMinLength 8)
     |> validateField #passwordHash (passwordMatch (param "passwordConfirm"))
 
 passwordMatch pw1 pw2 =
