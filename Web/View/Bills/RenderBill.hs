@@ -37,7 +37,7 @@ instance View RenderBillView where
                     {get #address client}
                 </p>
                 
-                <h2>Courses</h2>
+                <h2>{tripsTitle (get #trips bill)}</h2>
                 <div class="table-responsive pr-5">
                     <table class="table">
                         <thead class="text-left">
@@ -58,6 +58,7 @@ instance View RenderBillView where
             client = get #clientId bill
             user = get #userId bill
             sentOn = maybe "" renderDay (get #sentOn bill)
+            tripsTitle trips = if length trips > 1 then [hsx| Courses |] else [hsx| Course |]
             footer = renderFooter user
 
 renderFooter user = [hsx|
