@@ -31,14 +31,9 @@ instance Controller TripsController where
             >>= ifValid \case
                 Left trip -> render EditView { .. }
                 Right trip -> do
-                    bill <- fetch (get #billId trip)
-                    if isSent bill then do
-                        setErrorMessage "Impossible de modifier une facture déjà envoyée"
-                        redirectTo (ShowBillAction (get #billId trip))
-                    else do
-                        trip <- trip |> updateRecord
-                        setSuccessMessage "Course modifiée"
-                        redirectTo (ShowBillAction (get #billId trip))
+                    trip <- trip |> updateRecord
+                    setSuccessMessage "Course modifiée"
+                    redirectTo (ShowBillAction (get #billId trip))
 
     action CreateTripAction = do
         let trip = newRecord @Trip
@@ -48,14 +43,9 @@ instance Controller TripsController where
             >>= ifValid \case
                 Left trip -> render NewView { .. } 
                 Right trip -> do
-                    bill <- fetch (get #billId trip)
-                    if isSent bill then do
-                        setErrorMessage "Impossible de modifier une facture déjà envoyée"
-                        redirectTo (ShowBillAction (get #billId trip))
-                    else do
-                        trip <- trip |> createRecord
-                        setSuccessMessage "Course ajoutée"
-                        redirectTo (ShowBillAction (get #billId trip))
+                    trip <- trip |> createRecord
+                    setSuccessMessage "Course ajoutée"
+                    redirectTo (ShowBillAction (get #billId trip))
 
     action DeleteTripAction { tripId } = do
         trip <- fetch tripId
