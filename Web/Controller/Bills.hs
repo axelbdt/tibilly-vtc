@@ -150,7 +150,7 @@ excludeTax price = fromIntegral price / (1.0 + 0.1)
 generateBillNumber bill = do
     currentTime <- getCurrentTime
     let (year, month, day) = toGregorian $ utctDay currentTime
-    maxNumberThisMonth :: Int <- sqlQueryScalar "SELECT MAX(number) AS billCount FROM Bills WHERE EXTRACT(MONTH FROM sent_on) = ? AND EXTRACT(YEAR FROM sent_on) = ?" (month, year)
+    maxNumberThisMonth :: Int <- sqlQueryScalar "SELECT COALESCE(MAX(number), 0) AS billCount FROM Bills WHERE EXTRACT(MONTH FROM sent_on) = ? AND EXTRACT(YEAR FROM sent_on) = ?" (month, year)
     let billNumber = maxNumberThisMonth + 1
     return billNumber
 
