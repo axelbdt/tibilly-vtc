@@ -20,7 +20,7 @@ instance View RenderBillView where
                   }
                 </style>
             </head>
-            <body class="mt-5 mr-5 ml-5">
+            <body class="mt-5 mx-5">
                 <h1 class="text-center mb-3">
                     Facture
                 </h1>
@@ -38,7 +38,7 @@ instance View RenderBillView where
                 </p>
                 
                 <h2>Courses</h2>
-                <div class="table-responsive">
+                <div class="table-responsive pr-5">
                     <table class="table">
                         <thead class="text-left">
                             <th>Départ</th>
