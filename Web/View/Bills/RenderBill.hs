@@ -13,12 +13,24 @@ instance View RenderBillView where
 
     html RenderBillView { .. } = [hsx|
         <html>
-            <body>
-                <h1 class="text-center">
-                    Facture<br/>
+            <head>
+                <style>
+                .table th, .table td {
+                    padding: 1em;
+                  }
+                </style>
+            </head>
+            <body class="mt-5 mr-5 ml-5">
+                <h1 class="text-center mb-3">
+                    Facture
+                </h1>
+                
+                <h1 class="text-center mb-5">
                     Transport de personnes
                 </h1>
-                <p>Facture no. {renderBillNumber (get #sentOn bill) (get #number bill)}, expédiée le : {sentOn}, échéance immédiate.</p>
+
+                <p class="my-5">Facture no. {renderBillNumber (get #sentOn bill) (get #number bill)}, expédiée le : {sentOn}, échéance immédiate.</p>
+
                 <h2>Client</h2>
                 <p>
                     {get #name client}<br/>
