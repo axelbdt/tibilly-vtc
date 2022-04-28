@@ -7,7 +7,8 @@ data SendBillToClientMail = SendBillToClientMail { bill :: Include' ["userId","c
 instance BuildMail SendBillToClientMail where
     subject = "Your transport bill"
 
-    to SendBillToClientMail { .. } = Address { addressName = Just (get #name client), addressEmail = get #email client }
+    -- TODO: fix email address
+    to SendBillToClientMail { .. } = Address { addressName = Just (get #name client), addressEmail = "" }
         where client = get #clientId bill
 
     cc SendBillToClientMail { .. } = [
@@ -22,5 +23,6 @@ instance BuildMail SendBillToClientMail where
     |]
 
     attachments SendBillToClientMail { .. } = [
+        -- TODO: use generated
         MailAttachment { name = "bill.pdf", contentType = "application/pdf", content = pdf}
         ]

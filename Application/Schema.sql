@@ -32,7 +32,6 @@ CREATE INDEX trips_bill_id_index ON trips (bill_id);
 CREATE INDEX bills_user_id_index ON bills (user_id);
 CREATE TABLE clients (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
-    email TEXT NOT NULL,
     name TEXT NOT NULL,
     user_id UUID NOT NULL,
     address TEXT DEFAULT NULL

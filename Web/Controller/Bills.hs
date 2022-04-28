@@ -48,7 +48,6 @@ instance Controller BillsController where
     action CheckBeforeSendBillAction { billId } = do
         ensureIsUser
         fbill <- fetch billId
-            >>= fetchRelated #clientId
         accessDeniedUnless (get #userId fbill == currentUserId)
         -- TODO: use fetchRelated #trips
         tripCount <- query @Trip

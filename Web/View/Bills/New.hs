@@ -25,4 +25,4 @@ renderForm bill userClients = formFor bill [hsx|
 instance CanSelect Client where
     type SelectValue Client = Id Client
     selectValue client = get #id client
-    selectLabel client = get #name client ++ " - " ++ get #email client
+    selectLabel client = get #name client
