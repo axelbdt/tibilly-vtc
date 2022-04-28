@@ -8,13 +8,6 @@ instance View IndexView where
         <h1>Mes clients</h1>
         <div class="table-responsive">
             <table class="table">
-                <thead>
-                    <tr>
-                        <th>Client</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
                 <tbody>{forEach clients renderClient}</tbody>
             </table>
             
