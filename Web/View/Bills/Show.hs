@@ -12,15 +12,11 @@ instance View ShowView where
 
         <h2>Courses{addButton}</h2>
         {renderBody (get #trips bill) priceInfo}
-        {sentInfo}
         {renderButtons bill}
     |]
         where
             client = get #clientId bill
             addButton = [hsx|<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-primary ml-4">+ Ajouter</a>|]
-            sentInfo = case get #sentOn bill of
-                Just sentOn -> [hsx|<p class="text-center">Envoyée le {sentOn}</p>|]
-                Nothing -> [hsx||]
 
 renderButtons bill = [hsx|
         <div class="d-flex justify-content-between">
