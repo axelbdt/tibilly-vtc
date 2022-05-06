@@ -26,9 +26,10 @@ renderButtons bill = [hsx|
         </div>
         |]
         where sendButton = if null (get #trips bill) then
-                [hsx| <a href="#" class="btn btn-primary disabled">Envoyer</a> |]
+                [hsx| <a href="#" class="btn btn-primary disabled">{buttonLabel}</a> |]
                 else
-                [hsx| <a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">Envoyer</a> |]
+                [hsx| <a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">{buttonLabel}</a> |]
+                where buttonLabel = [hsx|Générer le PDF|]
 
 
 renderBody trips priceInfo = if null trips then

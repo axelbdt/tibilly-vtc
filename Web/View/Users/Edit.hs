@@ -21,7 +21,7 @@ renderForm user ct = formFor' user (pathTo UpdateCurrentUserAction) [hsx|
         <p>Ces informations apparaîtront sur vos factures</p>
         {(textField #name) { fieldLabel = "Nom de l'entreprise", required = True}}
         {(textField #immatriculation) { fieldLabel = "SIREN ou SIRET", required = True }}
-        {(checkboxField #hasVatNumber) { fieldLabel = "J'ai un numéro de TVA", helpText = "facultatif" }}
+        {(checkboxField #hasVatNumber) { fieldLabel = "J'ai un numéro de TVA", helpText = "Si vous cochez cette case, votre numéro de TVA sera déterminé à partir de votre SIREN/SIRET et apparaîtra dans vos factures." }}
         {(selectField #companyType (Nothing:(map Just ct))) { fieldLabel = "Type d'entreprise", helpText = "facultatif" }}
         {(numberField #capital) {fieldLabel = "Capital social (€)", helpText = "facultatif", additionalAttributes = [("min","0")] }}
         {(textField #address) {fieldLabel = "Adresse du siège social", helpText = "facultatif" }}

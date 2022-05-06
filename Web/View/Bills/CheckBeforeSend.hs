@@ -22,7 +22,7 @@ renderForm bill = formFor' bill (pathTo (SendBillAction (get #id bill))) [hsx|
     {hiddenField #number}
     <div class="d-flex justify-content-between mt-3">
         <a href={pathTo (ShowBillAction (get #id bill))} class="btn btn-outline-primary">Retour</a>
-        {submitButton { label = "Valider"}}
+        {submitButton { label = "Enregistrer"}}
     </div>
 
 |]
