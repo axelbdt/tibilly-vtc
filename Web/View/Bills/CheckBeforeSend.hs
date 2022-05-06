@@ -15,12 +15,14 @@ instance View CheckBeforeSendView where
                 })
                 .then(function(blob) {
 
-                  var file = new File([blob], "picture.jpg", {type: 'image/jpeg'});
+                  var file = new File([blob], "facture.pdf", {type: 'application/pdf'});
                   var filesArray = [file];
 
                   if(navigator.canShare && navigator.canShare({ files: filesArray })) {
                     navigator.share({
+                      title: "Mon Titre",
                       files: filesArray,
+                      text: "Mon texte"
                     });
                   }
                   else {
