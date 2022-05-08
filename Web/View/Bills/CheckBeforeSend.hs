@@ -10,6 +10,7 @@ instance View CheckBeforeSendView where
         <div class="w-100 my-3" style="height:32em">
             <iframe class="w-100 h-100" src={pathTo (GenerateBillPDFAction (get #id bill) billNumber sentOnText)} title="Bill" allowfullscreen></iframe>
         </div>
+        <p class="text-center">Si des informations sur votre entreprise sont manquantes, complétez-les via la page <a href={pathTo ShowCurrentUserAction}>Compte</a></p>
         {renderForm bill} 
         |]
             where
