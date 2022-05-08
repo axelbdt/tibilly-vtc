@@ -31,7 +31,7 @@ data UsersController
 
 data BillsController
     = BillsAction
-    | NewBillAction
+    | NewBillAction 
     | ShowBillAction { billId :: !(Id Bill) }
     | CheckBeforeSendBillAction { billId :: !(Id Bill) }
     | DeleteBillAction { billId :: !(Id Bill) }
