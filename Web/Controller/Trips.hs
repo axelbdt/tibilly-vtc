@@ -12,11 +12,14 @@ import Web.Controller.Bills (buildBill)
 
 instance Controller TripsController where
     action NewTripAction { billId } = do
+        bill <- fetch billId
+            >>= fetchRelated #clientId
         ensureIsUser
         currentTime <- getCurrentTime
         let trip = newRecord
               |> set #billId billId
               |> set #date (utctDay currentTime)
+        let client = get #clientId bill
         render NewView { .. }
 
     action EditTripAction { tripId } = do
@@ -41,7 +44,11 @@ instance Controller TripsController where
             |> buildTrip
             |> validateFieldIO #billId (validateBillBelongsToUser currentUserId)
             >>= ifValid \case
-                Left trip -> render NewView { .. } 
+                Left trip -> do
+                    bill <- fetch (get #billId trip)
+                        >>= fetchRelated #clientId
+                    let client = get #clientId bill
+                    render NewView { .. } 
                 Right trip -> do
                     trip <- trip |> createRecord
                     setSuccessMessage "Course ajoutée"
