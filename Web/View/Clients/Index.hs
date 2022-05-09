@@ -1,5 +1,6 @@
 module Web.View.Clients.Index where
 import Web.View.Prelude
+import Web.View.Clients.Render
 
 data IndexView = IndexView { clients :: [Client] }
 
@@ -22,8 +23,10 @@ renderClient client = [hsx|
     </tr>
 |]
     where
-    billButton = [hsx|
-        {renderForm client}
+    billButton = billClientForm client [hsx|
+        <button type="submit" title="Facturer" class="btn btn-outline-secondary">
+            <img src="icons/receipt.svg" alt="Facturer"/>
+        </button>
     |]
     editButton = [hsx|
     <a href={EditClientAction (get #id client)} title="Modifier">
@@ -35,14 +38,3 @@ renderClient client = [hsx|
         <button class="btn btn-outline-secondary"><img src="icons/trash.svg" alt="Supprimer" /></button>
     </a>
     |]
-
-renderForm :: Client -> Html
-renderForm client = [hsx|
-    <form method="post" action={pathTo CreateBillAction} class="d-inline">
-        <input type="hidden" name="clientId" value={theId}/>
-        <button type="submit" title="Facturer" class="btn btn-outline-secondary">
-            <img src="icons/receipt.svg" alt="Facturer"/>
-        </button>
-    </form>
-|]
-    where theId = show (get #id client)

@@ -1,5 +1,6 @@
 module Web.View.Clients.Show where
 import Web.View.Prelude
+import Web.View.Clients.Render
 
 data ShowView = ShowView { client :: Include "bills" Client }
 
@@ -8,13 +9,27 @@ instance View ShowView where
         <h1>{get #name client}</h1>
         <p>{get #address client}</p>
         
+        <h2>Factures{billButton client}</h2>
+        {renderBody (get #bills client)}
+    |]
+
+billButton client = billClientForm client [hsx|
+        <button type="submit" class="btn btn-primary ml-4">+ Nouvelle facture</button>
+|]
+
+renderBody bills = if null bills then
+            [hsx|
+                <p class="w-100 text-center">Aucune facture pour ce client.</p>
+            |]
+        else
+
+    [hsx|
         <div class="table-responsive">
             <table class="table">
-                <tbody>{forEach (get #bills client) renderBill}</tbody>
+                <tbody>{forEach bills renderBill}</tbody>
             </table>
         </div>
-
-    |]
+|]
 
 renderBill :: Bill -> Html
 renderBill bill = [hsx|

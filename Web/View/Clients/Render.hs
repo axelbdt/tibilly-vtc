@@ -7,3 +7,10 @@ clientForm client = [hsx|
     {(hiddenField #userId)}
     {submitButton}
 |]
+
+billClientForm client button = [hsx|
+    <form method="post" action={pathTo CreateBillAction} class="d-inline">
+        <input type="hidden" name="clientId" value={show (get #id client)}/>
+        {button}
+    </form>
+|]
