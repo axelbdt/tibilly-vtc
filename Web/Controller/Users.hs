@@ -110,4 +110,4 @@ passwordMatch pw1 pw2 =
         then Success
         else Failure "Les mots de passe ne correspondent pas"
 
-companyTypeList = ["EI","EIRL","EURL","SNC","SA","SARL","SAS","SASU"]
+companyTypeList = ["Auto-entrepreneur","EIRL","EURL","SNC","SA","SARL","SAS","SASU"]
