@@ -2,13 +2,18 @@ module Web.View.Clients.New where
 import Web.View.Prelude
 import Web.View.Clients.Render
 
-data NewView = NewView { client :: Client }
+data NewView = NewView { client :: Client, createBill :: Maybe Text }
 
 instance View NewView where
     html NewView { .. } = [hsx|
         <h1>Ajouter un client</h1>
-        {renderForm client}
+        {renderForm createBill client}
     |]
 
-renderForm :: Client -> Html
-renderForm client = formFor client (clientForm client)
+renderForm :: Maybe Text -> Client ->Html
+renderForm createBill client = formFor' client (pathTo (CreateClientAction createBill)) [hsx|
+    {(textField #name) { fieldLabel = "Nom", required = True }}
+    {(textField #address){ fieldLabel = "Adresse", helpText = "facultatif" }}
+    {(hiddenField #userId)}
+    {submitButton}
+|]

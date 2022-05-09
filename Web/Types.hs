@@ -42,9 +42,9 @@ data BillsController
 
 data ClientsController
     = ClientsAction
-    | NewClientAction
+    | NewClientAction { createBill :: Maybe Text }
     | ShowClientAction { clientId :: !(Id Client) }
-    | CreateClientAction
+    | CreateClientAction { createBill :: Maybe Text }
     | EditClientAction { clientId :: !(Id Client) }
     | UpdateClientAction { clientId :: !(Id Client) }
     | DeleteClientAction { clientId :: !(Id Client) }

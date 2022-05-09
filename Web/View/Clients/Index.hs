@@ -5,7 +5,7 @@ data IndexView = IndexView { clients :: [Client] }
 
 instance View IndexView where
     html IndexView { .. } = [hsx|
-        <h1>Mes clients</h1>
+        <h1>Mes clients<a href={NewClientAction Nothing} class="btn btn-primary ml-4">+ Nouveau client</a></h1>
         <div class="table-responsive">
             <table class="table">
                 <tbody>{forEach clients renderClient}</tbody>

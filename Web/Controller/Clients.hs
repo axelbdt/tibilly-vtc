@@ -16,7 +16,7 @@ instance Controller ClientsController where
             |> fetch
         render IndexView { .. }
 
-    action NewClientAction = do
+    action NewClientAction { createBill } = do
         ensureIsUser
         let client = newRecord
         render NewView { .. }
@@ -48,9 +48,8 @@ instance Controller ClientsController where
                     setSuccessMessage "Client modifié"
                     redirectTo ClientsAction
 
-    action CreateClientAction = do
+    action CreateClientAction { createBill }= do
         ensureIsUser
-        -- paramOrDefault @Bool False "createBill"
         let client = newRecord @Client
         client
             |> buildClient
@@ -59,20 +58,26 @@ instance Controller ClientsController where
                 Right client -> do
                     client <- client
                         |> createRecord
-                    let bill = newRecord @Bill
-                    bill
-                        |> set #clientId (get #id client)
-                        |> buildBill
-                        >>= ifValid \case
-                            Left bill -> do
-                                userClients <- query @Client
-                                    |> filterWhere (#userId, currentUserId)
-                                    |> fetch
-                                render NewView { .. } 
-                            Right bill -> do
-                                bill <- bill |> createRecord
-                                setSuccessMessage "Client et facture créés, ajoutez une course."
-                                redirectTo (NewTripAction (get #id bill))
+                    case createBill of
+                        Just _ -> do
+                            let bill = newRecord @Bill
+                            bill
+                                |> set #clientId (get #id client)
+                                |> buildBill
+                                >>= ifValid \case
+                                    Left bill -> do
+                                        userClients <- query @Client
+                                            |> filterWhere (#userId, currentUserId)
+                                            |> fetch
+                                        render NewView { .. } 
+                                    Right bill -> do
+                                        bill <- bill |> createRecord
+                                        setSuccessMessage "Client et facture créés, ajoutez une course."
+                                        redirectTo (NewTripAction (get #id bill))
+                        Nothing -> do
+                            setSuccessMessage "Client créé."
+                            redirectTo ClientsAction
+                        
 
     action DeleteClientAction { clientId } = do
         ensureIsUser
