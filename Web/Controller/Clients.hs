@@ -24,6 +24,8 @@ instance Controller ClientsController where
     action ShowClientAction { clientId } = do
         ensureIsUser
         client <- fetch clientId
+            >>= pure . modify #bills (orderByDesc #createdAt)
+            >>= fetchRelated #bills
         accessDeniedUnless (currentUserId == get #userId client)
         render ShowView { .. }
 

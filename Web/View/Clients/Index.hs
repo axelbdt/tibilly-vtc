@@ -17,7 +17,7 @@ instance View IndexView where
 renderClient :: Client -> Html
 renderClient client = [hsx|
     <tr>
-        <td>{get #name client}</td>
+        <td><a href={ShowClientAction (get #id client)}>{get #name client}</a></td>
         <td>{billButton} {editButton} {deleteButton}</td>
     </tr>
 |]
