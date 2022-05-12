@@ -17,7 +17,7 @@ renderForm bill userClients = formFor bill [hsx|
         <div class="pb-3" style="padding-top:2em"><a class="btn btn-secondary" href={NewClientAction (Just "True")}>Nouveau Client</a></div>
     </div>
     <div class="d-flex justify-content-between mt-3">
-        <a href={pathTo (ShowBillAction (get #id bill))} class="btn btn-outline-primary">Retour</a>
+        <a href={pathTo BillsAction} class="btn btn-outline-primary">Retour</a>
         {submitButton { label = "Valider"}}
     </div>
 |]
