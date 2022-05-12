@@ -12,25 +12,21 @@ instance View ShowView where
 
         <h2>Courses{addButton}</h2>
         {renderBody (get #trips bill) priceInfo}
-        {renderButtons bill}
+        {renderForm bill}
     |]
         where
             client = get #clientId bill
             addButton = [hsx|<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-primary ml-4">+ Ajouter</a>|]
 
-renderButtons bill = [hsx|
-        <div class="d-flex justify-content-between">
-                <a href={pathTo BillsAction} class="btn btn-outline-primary">Retour</a>
-                <a href={pathTo (DeleteBillAction (get #id bill))} class="btn btn-danger js-delete" data-confirm="Êtes-vous sûr de vouloir supprimer cette facture ?">Supprimer</a>
-                {sendButton}
-        </div>
-        |]
-        where sendButton = if null (get #trips bill) then
-                [hsx| <a href="#" class="btn btn-primary disabled">{buttonLabel}</a> |]
-                else
-                [hsx| <a href={pathTo (CheckBeforeSendBillAction (get #id bill))} class="btn btn-primary">{buttonLabel}</a> |]
-                where buttonLabel = [hsx|Générer le PDF|]
-
+renderForm bill = formFor' bill (pathTo (CheckBeforeSendBillAction (get #id bill))) [hsx|
+    {(dateField #sentOn) { fieldLabel = "Date" }}
+    {(numberField #number) { fieldLabel = "Numéro" }}
+    <div class="d-flex justify-content-between mt-3">
+        <a href={pathTo BillsAction} class="btn btn-outline-primary">Retour</a>
+        <a href={pathTo (DeleteBillAction (get #id bill))} class="btn btn-danger js-delete" data-confirm="Êtes-vous sûr de vouloir supprimer cette facture ?">Supprimer</a>
+        {submitButton { label = "Valider" }}
+    </div>
+|]
 
 renderBody trips priceInfo = if null trips then
             [hsx|

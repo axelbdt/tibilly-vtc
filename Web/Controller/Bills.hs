@@ -27,13 +27,22 @@ instance Controller BillsController where
 
     action ShowBillAction { billId } = do
         ensureIsUser
-        bill <- fetch billId
+        fbill <- fetch billId
             >>= fetchRelated #clientId
             >>= pure . modify #trips (orderBy #date)
             >>= fetchRelated #trips
-        accessDeniedUnless (get #userId bill == currentUserId)
-        let priceInfo = billPriceInfo bill
-        render ShowView { .. }
+        accessDeniedUnless (get #userId fbill == currentUserId)
+        let priceInfo = billPriceInfo fbill
+        case get #sentOn fbill of
+            Nothing -> do
+                billNumber <- generateBillNumber fbill
+                currentTime <- getCurrentTime
+                let currentDay = utctDay currentTime
+                let bill = fbill |> set #sentOn (Just currentDay) |> set #number (Just billNumber)
+                render ShowView { .. }
+            Just _ -> do
+                let bill = fbill
+                render ShowView { .. }
 
 
     action NewBillAction = do
@@ -47,8 +56,8 @@ instance Controller BillsController where
 
     action CheckBeforeSendBillAction { billId } = do
         ensureIsUser
-        fbill <- fetch billId
-        accessDeniedUnless (get #userId fbill == currentUserId)
+        bill <- fetch billId
+        accessDeniedUnless (get #userId bill == currentUserId)
         -- TODO: use fetchRelated #trips
         tripCount <- query @Trip
             |> filterWhere (#billId, billId)
@@ -57,16 +66,10 @@ instance Controller BillsController where
             setErrorMessage "Ajoutez d'abord une course à la facture"
             redirectTo (ShowBillAction billId)
         else do
-            case get #sentOn fbill of
-                Nothing -> do
-                    billNumber <- generateBillNumber fbill
-                    currentTime <- getCurrentTime
-                    let currentDay = utctDay currentTime
-                    let bill = fbill |> set #sentOn (Just currentDay) |> set #number (Just billNumber)
-                    render CheckBeforeSendView { .. }
-                Just _ -> do
-                    let bill = fbill
-                    render CheckBeforeSendView { .. }
+            bill <- bill
+                |> fill @["sentOn","number"]
+                |> updateRecord
+            render CheckBeforeSendView { .. }
 
     -- TODO: Refacto when I have learned about Monads
     action GenerateBillPDFAction { billId, billNumber, sentOnText } = do
@@ -86,9 +89,6 @@ instance Controller BillsController where
     action SendBillAction { billId } = do
         ensureIsUser
         bill <- fetch billId
-        bill <- bill
-            |> fill @["sentOn","number"]
-            |> updateRecord
         setSuccessMessage "Facture enregistrée"
         redirectTo BillsAction
 
