@@ -35,9 +35,9 @@ instance Controller BillsController where
         let priceInfo = billPriceInfo fbill
         case get #sentOn fbill of
             Nothing -> do
-                billNumber <- generateBillNumber fbill
                 currentTime <- getCurrentTime
                 let currentDay = utctDay currentTime
+                billNumber <- generateBillNumber currentUserId currentDay
                 let bill = fbill |> set #sentOn (Just currentDay) |> set #number (Just billNumber)
                 render ShowView { .. }
             Just _ -> do
@@ -146,10 +146,9 @@ computePriceIncludingTax bill = bill |> get #trips |> map (get #price) |> sum
 excludeTax :: Int -> Float
 excludeTax price = fromIntegral price / (1.0 + 0.1)
 
-generateBillNumber bill = do
-    currentTime <- getCurrentTime
-    let (year, month, day) = toGregorian $ utctDay currentTime
-    maxNumberThisMonth :: Int <- sqlQueryScalar "SELECT COALESCE(MAX(number), 0) AS billCount FROM Bills WHERE EXTRACT(MONTH FROM sent_on) = ? AND EXTRACT(YEAR FROM sent_on) = ?" (month, year)
+generateBillNumber userId billDate = do
+    let (year, month, day) = toGregorian billDate
+    maxNumberThisMonth :: Int <- sqlQueryScalar "SELECT COALESCE(MAX(number), 0) AS billCount FROM Bills WHERE user_id = ? AND EXTRACT(MONTH FROM sent_on) = ? AND EXTRACT(YEAR FROM sent_on) = ?" (userId, month, year)
     let billNumber = maxNumberThisMonth + 1
     return billNumber
 
