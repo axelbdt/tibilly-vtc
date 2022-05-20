@@ -18,7 +18,7 @@ instance View CheckBillPDFView where
                 billNumber = fromMaybe 0 (get #number bill)
 
 
-renderForm bill = formFor' bill (pathTo (SendBillAction (get #id bill))) [hsx|
+renderForm bill = formFor' bill (pathTo BillsAction) [hsx|
     {hiddenField #sentOn}
     {hiddenField #number}
     <div class="d-flex justify-content-between mt-3">

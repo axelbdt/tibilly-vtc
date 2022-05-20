@@ -69,6 +69,7 @@ instance Controller BillsController where
             bill <- bill
                 |> fill @["sentOn","number"]
                 |> updateRecord
+            setSuccessMessage "Facture enregistrée"
             render CheckBillPDFView { .. }
 
     -- TODO: Refacto when I have learned about Monads
@@ -84,13 +85,6 @@ instance Controller BillsController where
         let sentOn = parseTimeOrError True defaultTimeLocale "%Y-%m-%d" (T.unpack sentOnText)
         let bill = fbill |> set #sentOn (Just sentOn) |> set #number (Just billNumber)
         renderPDFResponse (billFileName bill) RenderBillView { .. }
-
-    -- TODO: Manage case of already sent bill
-    action SendBillAction { billId } = do
-        ensureIsUser
-        bill <- fetch billId
-        setSuccessMessage "Facture enregistrée"
-        redirectTo BillsAction
 
     action CreateBillAction = do
         ensureIsUser
