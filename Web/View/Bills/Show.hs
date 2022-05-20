@@ -18,7 +18,7 @@ instance View ShowView where
             client = get #clientId bill
             addButton = [hsx|<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-primary ml-4">+ Ajouter</a>|]
 
-renderForm bill = formFor' bill (pathTo (CheckBeforeSendBillAction (get #id bill))) [hsx|
+renderForm bill = formFor' bill (pathTo (CheckBillPDFAction (get #id bill))) [hsx|
     {(dateField #sentOn) { fieldLabel = "Date" }}
     {(numberField #number) { fieldLabel = "Numéro" }}
     <div class="d-flex justify-content-between mt-3">

@@ -9,7 +9,7 @@ import Web.Controller.Prelude
 import Web.View.Bills.Index
 import Web.View.Bills.New
 import Web.View.Bills.Show
-import Web.View.Bills.CheckBeforeSend
+import Web.View.Bills.CheckBillPDF
 
 import Web.View.Bills.RenderBill
 
@@ -54,7 +54,7 @@ instance Controller BillsController where
         let bill = newRecord
         render NewView { .. }
 
-    action CheckBeforeSendBillAction { billId } = do
+    action CheckBillPDFAction { billId } = do
         ensureIsUser
         bill <- fetch billId
         accessDeniedUnless (get #userId bill == currentUserId)
@@ -69,7 +69,7 @@ instance Controller BillsController where
             bill <- bill
                 |> fill @["sentOn","number"]
                 |> updateRecord
-            render CheckBeforeSendView { .. }
+            render CheckBillPDFView { .. }
 
     -- TODO: Refacto when I have learned about Monads
     action GenerateBillPDFAction { billId, billNumber, sentOnText } = do

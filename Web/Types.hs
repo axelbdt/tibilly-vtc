@@ -33,7 +33,7 @@ data BillsController
     = BillsAction
     | NewBillAction 
     | ShowBillAction { billId :: !(Id Bill) }
-    | CheckBeforeSendBillAction { billId :: !(Id Bill) }
+    | CheckBillPDFAction { billId :: !(Id Bill) }
     | DeleteBillAction { billId :: !(Id Bill) }
     | GenerateBillPDFAction { billId :: !(Id Bill), billNumber :: Int, sentOnText :: Text }
     | SendBillAction { billId :: !(Id Bill) }
