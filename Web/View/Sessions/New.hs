@@ -17,6 +17,7 @@ renderForm user = [hsx|
         <div class="form-group">
             <input name="password" type="password" class="form-control" placeholder="Mot de passe"/>
         </div>
-        <button type="submit" class="btn btn-primary">Se connecter</button>
+        <p class="text-center"><button type="submit" class="btn btn-primary">Se connecter</button></p>
+        <p class="text-center">Pas encore de compte ? <a href={NewUserAction}>S'inscrire</a></p>
     </form>
 |]

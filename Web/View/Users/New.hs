@@ -15,5 +15,6 @@ renderForm user = formFor user [hsx|
     {(textField #immatriculation) { fieldLabel = "SIREN ou SIRET" }}
     {(passwordField #passwordHash) {fieldLabel="Mot de passe"}}
     {(passwordField #passwordHash) {fieldName="passwordConfirm", fieldLabel="Confirmer le mot de passe"}}
-    {submitButton {label =  "S'inscrire" }}
+    <p class="text-center">{submitButton {label =  "S'inscrire" }}</p>
+    <p class="text-center">Déjà un compte ? <a href={NewSessionAction}>Se connecter</a></p>
 |]
