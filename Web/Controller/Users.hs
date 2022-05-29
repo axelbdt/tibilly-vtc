@@ -13,12 +13,14 @@ instance Controller UsersController where
         render NewView { .. }
 
     action ShowCurrentUserAction = do
+        ensureIsUser
         user <- fetch currentUserId
                     |> fmap (set #passwordHash "")
         let companyTypes = companyTypeList
         render EditView { .. }
 
     action UpdateCurrentUserAction = do
+        ensureIsUser
         user <- fetch currentUserId
         if param @Text "passwordHash" == "" then do
             user

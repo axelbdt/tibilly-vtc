@@ -11,10 +11,11 @@ import Web.View.Trips.Edit
 import Web.Controller.Bills (buildBill)
 
 instance Controller TripsController where
+    beforeAction = ensureIsUser
+
     action NewTripAction { billId } = do
         bill <- fetch billId
             >>= fetchRelated #clientId
-        ensureIsUser
         currentTime <- getCurrentTime
         let trip = newRecord
               |> set #billId billId

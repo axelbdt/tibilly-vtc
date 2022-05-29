@@ -8,8 +8,9 @@ import Web.View.Clients.Edit
 import Web.View.Clients.Show
 
 instance Controller ClientsController where
+    beforeAction = ensureIsUser
+
     action ClientsAction = do
-        ensureIsUser
         clients <- query @Client
             |> filterWhere (#userId, currentUserId)
             |> orderBy #name
@@ -17,12 +18,10 @@ instance Controller ClientsController where
         render IndexView { .. }
 
     action NewClientAction { createBill } = do
-        ensureIsUser
         let client = newRecord
         render NewView { .. }
 
     action ShowClientAction { clientId } = do
-        ensureIsUser
         client <- fetch clientId
             >>= pure . modify #bills (orderByDesc #createdAt)
             >>= fetchRelated #bills
@@ -30,13 +29,11 @@ instance Controller ClientsController where
         render ShowView { .. }
 
     action EditClientAction { clientId } = do
-        ensureIsUser
         client <- fetch clientId
         accessDeniedUnless (currentUserId == get #userId client)
         render EditView { .. }
 
     action UpdateClientAction { clientId } = do
-        ensureIsUser
         client <- fetch clientId
         accessDeniedUnless (currentUserId == get #userId client)
         client
@@ -49,7 +46,6 @@ instance Controller ClientsController where
                     redirectTo ClientsAction
 
     action CreateClientAction { createBill }= do
-        ensureIsUser
         let client = newRecord @Client
         client
             |> buildClient
@@ -80,7 +76,6 @@ instance Controller ClientsController where
                         
 
     action DeleteClientAction { clientId } = do
-        ensureIsUser
         client <- fetch clientId
         accessDeniedUnless (currentUserId == get #userId client)
         deleteRecord client

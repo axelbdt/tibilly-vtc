@@ -16,8 +16,9 @@ import Web.View.Bills.RenderBill
 import Web.Mail.Bills.SendBillToClient
 
 instance Controller BillsController where
+    beforeAction = ensureIsUser
+
     action BillsAction = do
-        ensureIsUser
         bills <- query @Bill
             |> filterWhere (#userId, currentUserId)
             |> orderByDesc #createdAt
@@ -26,7 +27,6 @@ instance Controller BillsController where
         render IndexView { .. }
 
     action ShowBillAction { billId } = do
-        ensureIsUser
         fbill <- fetch billId
             >>= fetchRelated #clientId
             >>= pure . modify #trips (orderBy #date)
@@ -46,7 +46,6 @@ instance Controller BillsController where
 
 
     action NewBillAction = do
-        ensureIsUser
         userClients <- query @Client
              |> filterWhere (#userId, currentUserId)
              |> orderBy #name
@@ -55,7 +54,6 @@ instance Controller BillsController where
         render NewView { .. }
 
     action CheckBillPDFAction { billId } = do
-        ensureIsUser
         bill <- fetch billId
         accessDeniedUnless (get #userId bill == currentUserId)
         -- TODO: use fetchRelated #trips
@@ -74,7 +72,6 @@ instance Controller BillsController where
 
     -- TODO: Refacto when I have learned about Monads
     action GenerateBillPDFAction { billId, billNumber, sentOnText } = do
-        ensureIsUser
         fbill <- fetch billId
             >>= fetchRelated #userId
             >>= fetchRelated #clientId
@@ -87,7 +84,6 @@ instance Controller BillsController where
         renderPDFResponse (billFileName bill) RenderBillView { .. }
 
     action CreateBillAction = do
-        ensureIsUser
         let bill = newRecord @Bill
         bill
             |> buildBill
@@ -103,7 +99,6 @@ instance Controller BillsController where
                     redirectTo (NewTripAction (get #id bill))
 
     action DeleteBillAction { billId } = do
-        ensureIsUser
         bill <- fetch billId
         accessDeniedUnless (get #userId bill == currentUserId)
         deleteRecord bill
