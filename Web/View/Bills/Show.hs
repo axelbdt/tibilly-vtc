@@ -19,8 +19,27 @@ instance View ShowView where
             addButton = [hsx|<a href={pathTo (NewTripAction (get #id bill))} class="btn btn-primary ml-4">+ Ajouter</a>|]
 
 renderForm bill = formFor' bill (pathTo (CheckBillPDFAction (get #id bill))) [hsx|
-    {(dateField #sentOn) { fieldLabel = "Date" }}
-    {(numberField #number) { fieldLabel = "Numéro" }}
+    <script>
+    $(document).on("ready turbolinks:load", () => {
+        let optionsFieldset = $('#options')
+        let displayLink = $('#displayOptions')
+        let displayLinkContainer = $('#displayOptionsLinkContainer')
+        
+        optionsFieldset.hide()
+        displayLinkContainer.show()
+        displayLink.click(() => {
+            optionsFieldset.show()
+            displayLinkContainer.hide()
+        })
+    })
+    </script>
+    <p id="displayOptionsLinkContainer" class="text-center" style="display:None">
+        <a id="displayOptions" href="#"  data-turbolinks="false">Modifier la date ou le numéro de facture.</a>
+    </p>
+    <fieldset id="options">
+        {(dateField #sentOn) { fieldLabel = "Date de la facture" }}
+        {(numberField #number) { fieldLabel = "Numéro de facture", helpText = "Numéro de facture ce mois-ci." }}
+    </fieldset>
     <div class="d-flex justify-content-between mt-3">
         <a href={pathTo BillsAction} class="btn btn-outline-primary">Retour</a>
         <a href={pathTo (DeleteBillAction (get #id bill))} class="btn btn-danger js-delete" data-confirm="Êtes-vous sûr de vouloir supprimer cette facture ?">Supprimer</a>
